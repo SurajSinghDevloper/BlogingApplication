@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import LoginModal from "./modals/LoginModal";
+import SignupModal from "./modals/SignupModal";
 
 const NavBar = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -18,27 +19,22 @@ const NavBar = (props) => {
         <a className="navbar-brand" href="/">
           Your App
         </a>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <button type="button" className="btn btn-primary" onClick={openModal}>
+
+        <div style={{ float: "right", justifyContent: "right", }} >
+          <button type="button" className="btn btn-primary" onClick={openModal} >
             Login
+          </button>
+
+          <button type="button" className="btn btn-primary" onClick={openModal} style={{ marginLeft: "10px" }}>
+            Signup
           </button>
         </div>
         <LoginModal isOpen={modalOpen} onClose={closeModal} />
+        <SignupModal isOpen={modalOpen} onClose={closeModal} />
       </div>
 
       {/* Modal */}
-    </nav>
+    </nav >
   );
 };
 

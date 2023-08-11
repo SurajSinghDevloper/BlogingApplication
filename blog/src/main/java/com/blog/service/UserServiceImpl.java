@@ -75,4 +75,9 @@ public class UserServiceImpl implements UserService {
             return null; // Return null if the user is not found or password doesn't match
         }
     }
+
+    public User signUpUser(User usr) {
+        User usrs = usersRepository.save(usr);
+        return usrs;
+    }
 }

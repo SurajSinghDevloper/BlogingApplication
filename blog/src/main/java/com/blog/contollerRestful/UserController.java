@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,14 +34,14 @@ public class UserController {
     @Value("${blog.image.upload.path}")
     private String imageUploadPath;
 
-    @PostMapping("/createUser")
+    @PutMapping("/createUser")
     public ResponseEntity<?> saveUser(@RequestParam("name") String name,
             @RequestParam("email") String email,
             @RequestParam("mobile") long mobile,
             @RequestParam("password") String password,
             @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
         // Validation for required fields and image file
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || imageFile.isEmpty()) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             return ResponseEntity.badRequest().body("Required fields are missing.");
         }
 
@@ -79,6 +80,10 @@ public class UserController {
         }
     }
 
+    /**
+     * @param loginRequest
+     * @return
+     */
     @PostMapping("/user/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginRequest) {
         String email = loginRequest.get("email");
@@ -96,6 +101,23 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
         }
+    }
+
+    @PostMapping("/signup/user")
+    public ResponseEntity<?> signUp(@RequestBody User usr) {
+        String emails = usr.getEmail();
+        ResponseEntity<?> res;
+        if (emails.equals(usr.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Email already exists");
+        } else {
+            User user = new User();
+            user.setName(usr.getName());
+            user.setEmail(usr.getEmail());
+            user.setMobile(usr.getMobile());
+            user.setPassword(usr.getPassword());
+            res = ResponseEntity.status(HttpStatus.CREATED).body("User Registered Successfully");
+        }
+        return res;
     }
 
 }

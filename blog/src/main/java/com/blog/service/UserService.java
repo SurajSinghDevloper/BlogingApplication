@@ -18,4 +18,6 @@ public interface UserService {
     public void deleteUser(int userId);
 
     User loginUser(String email, String password);
+
+    User signUpUser(User usr);
 }
