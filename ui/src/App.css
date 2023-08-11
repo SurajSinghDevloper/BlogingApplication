@@ -1,0 +1,45 @@
+/* App.css */
+/* ... previous CSS rules ... */
+
+.modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+}
+
+/* Style the modal body content */
+.modal-body {
+    padding: 20px;
+}
+
+/* Style the modal footer */
+.modal-footer {
+    justify-content: flex-end;
+    border-top: none;
+    padding: 15px 20px;
+    background-color: #f9f9f9;
+}
+
+/* Additional styling for buttons inside the modal footer */
+.modal-footer button {
+    margin-left: 10px;
+}
+
+/* Style the modal overlay for hover effect */
+.modal-overlay:hover {
+    cursor: pointer;
+}
+
+/* Style the close button */
+.close {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.close:hover {
+    color: #dc3545;
+}
+
+/* Style the close button when focused */
+.close:focus {
+    outline: none;
+}
