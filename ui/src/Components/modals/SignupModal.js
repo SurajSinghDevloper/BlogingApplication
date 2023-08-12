@@ -1,7 +1,42 @@
-import React from "react";
-import { Modal, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Modal, Button, Alert } from "react-bootstrap";
+import axios from "axios";
+
 
 const SignupModal = ({ isOpen, onClose }) => {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [password, setPassword] = useState("");
+
+
+  const handleSaveChanges = async() => {
+    console.log("Full Name:", fullName);
+    console.log("Email:", email);
+    console.log("Mobile:", mobile);
+    console.log("Password:", password);
+    const user ={fullName,
+      email,
+      mobile,
+      password,};
+
+      try {
+        if(fullName !== ""||email !== "" || mobile !==""|| password !==""){
+          const response = await axios.post("http://localhost:8081/api/signup/user", user);
+          console.log("Response:", response.data);
+        }else{
+          Alert("All Fields Are Important")
+        }
+        onClose();
+        user.clear();
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    // Close the modal after handling the data
+    onClose();
+    
+  };
+
   return (
     <Modal show={isOpen} onHide={onClose}>
       <Modal.Header closeButton>
@@ -9,56 +44,62 @@ const SignupModal = ({ isOpen, onClose }) => {
       </Modal.Header>
       <Modal.Body>
         <form>
-          <div class="mb-3">
-            <label for="name" class="form-label">
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
               Full Name
             </label>
             <input
               type="text"
-              class="form-control"
+              className="form-control"
               id="name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               aria-describedby="name"
             />
-
-            <label for="exampleInputEmail1" class="form-label">
+            <label htmlFor="exampleInputEmail1" className="form-label">
               Email address
             </label>
             <input
               type="email"
-              class="form-control"
+              className="form-control"
+              value={email}
               id="exampleInputEmail1"
+              onChange={(e) => setEmail(e.target.value)}
               aria-describedby="emailHelp"
             />
-            <label for="name" class="form-label">
+            <label htmlFor="mobile" className="form-label">
               Mobile Number
             </label>
             <input
               type="text"
-              class="form-control"
+              className="form-control"
               id="mobile"
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
               aria-describedby="mobile"
             />
-            <div class="mb-3">
-              <label for="exampleInputPassword1" class="form-label">
+            <div className="mb-3">
+              <label htmlFor="exampleInputPassword1" className="form-label">
                 Password
               </label>
               <input
                 type="password"
-                class="form-control"
+                className="form-control"
                 id="exampleInputPassword1"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
-          <button type="submit" class="btn btn-primary">
-            Submit
-          </button>
         </form>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>
           Close
         </Button>
-        <Button variant="primary">Save changes</Button>
+        <Button variant="primary" onClick={handleSaveChanges}>
+          Register 
+        </Button>
       </Modal.Footer>
     </Modal>
   );

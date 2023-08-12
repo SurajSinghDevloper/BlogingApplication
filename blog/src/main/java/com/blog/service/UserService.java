@@ -19,5 +19,9 @@ public interface UserService {
 
     User loginUser(String email, String password);
 
+    public Boolean doesUserExistByEmail(String email);
+
     User signUpUser(User usr);
+
+    public User getUserByEmail(String email);
 }

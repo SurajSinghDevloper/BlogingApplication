@@ -85,36 +85,34 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/login")
-    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginRequest) {
+    public ResponseEntity<Boolean> loginUser(@RequestBody Map<String, String> loginRequest) {
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
 
         // Validation for required fields
         if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
-            return ResponseEntity.badRequest().body("Required fields are missing.");
+            return ResponseEntity.badRequest().body(false);
         }
 
-        User loggedInUser = userService.loginUser(email, password);
+        User loggedInUser = userService.getUserByEmail(email);
 
-        if (loggedInUser != null) {
-            return ResponseEntity.ok(loggedInUser);
+        if (loggedInUser != null && loggedInUser.getPassword().equals(password)) {
+            return ResponseEntity.ok(true);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
         }
     }
 
     @PostMapping("/signup/user")
-    public ResponseEntity<?> signUp(@RequestBody User usr) {
-        String emails = usr.getEmail();
-        ResponseEntity<?> res;
-        if (emails.equals(usr.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Email already exists");
+    public ResponseEntity<String> signUp(@RequestBody User user) {
+        Boolean userFound = userService.doesUserExistByEmail(user.getEmail());
+        ResponseEntity<String> res; // Use specific ResponseEntity type
+
+        if (userFound) {
+            res = ResponseEntity.badRequest().body("User Email already exists");
         } else {
-            User user = new User();
-            user.setName(usr.getName());
-            user.setEmail(usr.getEmail());
-            user.setMobile(usr.getMobile());
-            user.setPassword(usr.getPassword());
+            User usr = user;
+            userService.signUpUser(usr);
             res = ResponseEntity.status(HttpStatus.CREATED).body("User Registered Successfully");
         }
         return res;
