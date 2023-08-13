@@ -2,11 +2,14 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
+import { useDispatch } from 'react-redux';
 
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
+  const dispatch = useDispatch();
+
   const handleSaveChanges = async() => {
     console.log("Email:", email);
     console.log("Password:", password);

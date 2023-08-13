@@ -2,12 +2,14 @@ package com.blog.entity;
 
 import java.sql.Date;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = { "email" }))
@@ -20,6 +22,7 @@ public class User {
     private String address;
     private String profileImg;
     private String password;
+    private String role;
     private long mobile;
     private String securityQuestion;
     private String securityAnswer;
@@ -125,4 +128,13 @@ public class User {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+    
 }
