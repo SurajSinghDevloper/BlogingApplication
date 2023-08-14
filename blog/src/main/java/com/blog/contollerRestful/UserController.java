@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,19 +25,59 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.blog.configuration.MySecurity;
+import com.blog.entity.JwtRequest;
+import com.blog.entity.JwtResponse;
 import com.blog.entity.User;
+import com.blog.service.CustomUserDetailsService;
 import com.blog.service.UserService;
+import com.blog.utils.JwtUtill;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/token/api")
 public class UserController {
 
     @Autowired
     UserService userService;
+    
+    @Autowired
+    JwtUtill jwtUtil;
+    
+    
+    @Autowired
+    AuthenticationManager authenticationManager;
+    
+    @Autowired
+    CustomUserDetailsService customUserDetailsService;
 
     @Value("${blog.image.upload.path}")
     private String imageUploadPath;
+    
+    @PostMapping("/generate")
+    public ResponseEntity<?> generateToken(@RequestBody JwtRequest jwtRequest) throws Exception {
+        User usr = new User();
+        jwtRequest.setUserName(usr.getEmail());
+        jwtRequest.setPassword(usr.getPassword());
 
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+			        jwtRequest.getUserName(), jwtRequest.getPassword()));
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+            throw new Exception("Bad Credential");
+        }
+
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(jwtRequest.getUserName());
+        String token = jwtUtil.generateToken(userDetails);
+        System.out.println("TOKEN ==================>>  " + token);
+
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    
+    
+    
+    
     @PutMapping("/createUser")
     public ResponseEntity<?> saveUser(@RequestParam("name") String name,
             @RequestParam("email") String email,
@@ -117,5 +161,6 @@ public class UserController {
         }
         return res;
     }
+
 
 }
