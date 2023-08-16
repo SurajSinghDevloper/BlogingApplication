@@ -25,54 +25,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.blog.configuration.MySecurity;
-import com.blog.entity.JwtRequest;
-import com.blog.entity.JwtResponse;
+
 import com.blog.entity.User;
-import com.blog.service.CustomUserDetailsService;
+
 import com.blog.service.UserService;
-import com.blog.utils.JwtUtill;
+
 
 @RestController
-@RequestMapping("/token/api")
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
     UserService userService;
     
-    @Autowired
-    JwtUtill jwtUtil;
+
     
     
-    @Autowired
-    AuthenticationManager authenticationManager;
+
     
-    @Autowired
-    CustomUserDetailsService customUserDetailsService;
+
 
     @Value("${blog.image.upload.path}")
     private String imageUploadPath;
     
-    @PostMapping("/generate")
-    public ResponseEntity<?> generateToken(@RequestBody JwtRequest jwtRequest) throws Exception {
-        User usr = new User();
-        jwtRequest.setUserName(usr.getEmail());
-        jwtRequest.setPassword(usr.getPassword());
 
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-			        jwtRequest.getUserName(), jwtRequest.getPassword()));
-        } catch (UsernameNotFoundException e) {
-            e.printStackTrace();
-            throw new Exception("Bad Credential");
-        }
-
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(jwtRequest.getUserName());
-        String token = jwtUtil.generateToken(userDetails);
-        System.out.println("TOKEN ==================>>  " + token);
-
-        return ResponseEntity.ok(new JwtResponse(token));
-    }
 
     
     
@@ -80,18 +56,18 @@ public class UserController {
     
     @PutMapping("/createUser")
     public ResponseEntity<?> saveUser(@RequestParam("name") String name,
-            @RequestParam("email") String email,
+            @RequestParam("email") String username,
             @RequestParam("mobile") long mobile,
             @RequestParam("password") String password,
             @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
         // Validation for required fields and image file
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+        if (name.isEmpty() || username.isEmpty() || password.isEmpty()) {
             return ResponseEntity.badRequest().body("Required fields are missing.");
         }
 
         User user = new User();
         user.setName(name);
-        user.setEmail(email);
+        user.setusername(username);
         user.setMobile(mobile);
         user.setPassword(password);
 
@@ -149,7 +125,7 @@ public class UserController {
 
     @PostMapping("/signup/user")
     public ResponseEntity<String> signUp(@RequestBody User user) {
-        Boolean userFound = userService.doesUserExistByEmail(user.getEmail());
+        Boolean userFound = userService.doesUserExistByEmail(user.getusername());
         ResponseEntity<String> res; // Use specific ResponseEntity type
 
         if (userFound) {

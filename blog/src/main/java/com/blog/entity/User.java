@@ -12,13 +12,14 @@ import javax.persistence.UniqueConstraint;
 
 
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = { "email" }))
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = { "username","email" }))
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int userId;
     private String name;
-    private String email;
+    private String username;
+    private String email; 
     private String address;
     private String profileImg;
     private String password;
@@ -36,6 +37,14 @@ public class User {
         this.name = name;
     }
 
+    public String getusername() {
+        return username;
+    }
+
+    public void setusername(String username) {
+        this.username = username;
+    }
+    // Getter and setter for email
     public String getEmail() {
         return email;
     }
@@ -104,12 +113,12 @@ public class User {
         super();
     }
 
-    public User(int userId, String name, String email, String address, String profileImg, String password, long mobile,
+    public User(int userId, String name, String username, String address, String profileImg, String password, long mobile,
             String securityQuestion, String securityAnswer, Date date) {
         super();
         this.userId = userId;
         this.name = name;
-        this.email = email;
+        this.username = username;
         this.address = address;
         this.profileImg = profileImg;
         this.password = password;

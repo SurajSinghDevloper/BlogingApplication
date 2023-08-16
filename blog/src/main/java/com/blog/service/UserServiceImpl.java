@@ -67,8 +67,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User loginUser(String email, String password) {
-        User user = usersRepository.findByEmail(email);
+    public User loginUser(String username, String password) {
+        User user = usersRepository.findByEmail(username);
         if (user != null && user.getPassword().equals(password)) {
             return user;
         } else {
@@ -81,13 +81,25 @@ public class UserServiceImpl implements UserService {
         return usrs;
     }
 
-    public Boolean doesUserExistByEmail(String email) {
-        User user = usersRepository.findByEmail(email);
+    public Boolean doesUserExistByusername(String username) {
+        User user = usersRepository.findByEmail(username);
         return user != null;
     }
 
-    public User getUserByEmail(String email) {
-        User usr = usersRepository.findByEmail(email);
+    public User getUserByusername(String username) {
+        User usr = usersRepository.findByEmail(username);
         return usr;
     }
+
+	@Override
+	public Boolean doesUserExistByEmail(String username) {
+		User user = usersRepository.findByEmail(username);
+        return user != null;
+	}
+
+	@Override
+	public User getUserByEmail(String username) {
+		User usr = usersRepository.findByEmail(username);
+        return usr;
+	}
 }

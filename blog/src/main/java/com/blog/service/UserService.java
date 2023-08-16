@@ -17,11 +17,11 @@ public interface UserService {
 
     public void deleteUser(int userId);
 
-    User loginUser(String email, String password);
+    User loginUser(String username, String password);
 
-    public Boolean doesUserExistByEmail(String email);
+    public Boolean doesUserExistByEmail(String username);
 
     User signUpUser(User usr);
 
-    public User getUserByEmail(String email);
+    public User getUserByEmail(String username);
 }
