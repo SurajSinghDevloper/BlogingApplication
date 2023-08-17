@@ -1,12 +1,7 @@
-import axios from 'axios'
+import axios from 'axios';
 
-const api =process.env.BASEURL;
 const RouteTo = axios.create({
-    baseURL: api
-    // headers: {
-    //     'Authorization':''
-    // }
+    baseURL: process.env.REACT_APP_BASE_URL
 });
-
 
 export default RouteTo;

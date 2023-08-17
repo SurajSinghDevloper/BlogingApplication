@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import com.blog.configuration.AuthenticationRequest;
+import com.blog.configuration.CustomUserDetailsService;
+import com.blog.configuration.JwtUtil;
 import com.blog.entity.User;
 
 import com.blog.service.UserService;
@@ -39,7 +43,14 @@ public class UserController {
     UserService userService;
     
 
-    
+	 @Autowired
+	    private AuthenticationManager authenticationManager;
+
+	    @Autowired
+	    private CustomUserDetailsService userDetailsService;
+
+	    @Autowired
+	    private JwtUtil jwtUtil;
     
 
     
@@ -100,12 +111,30 @@ public class UserController {
         }
     }
 
+    
+    public String generateAuthenticationToken(AuthenticationRequest authenticationRequest) throws AuthenticationException {
+        // Step 1: Authenticate user
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authenticationRequest.getEmail(), authenticationRequest.getPassword()));
+
+        // Step 2: Load user details
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+
+        // Step 3: Generate token
+        String token = jwtUtil.generateToken(userDetails.getUsername());
+
+        return token;
+    }
+
+    
+    
     /**
      * @param loginRequest
      * @return
      */
     @PostMapping("/user/login")
-    public ResponseEntity<Boolean> loginUser(@RequestBody Map<String, String> loginRequest) {
+    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginRequest) {
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
 
@@ -117,11 +146,31 @@ public class UserController {
         User loggedInUser = userService.getUserByEmail(email);
 
         if (loggedInUser != null && loggedInUser.getPassword().equals(password)) {
-            return ResponseEntity.ok(true);
+            // Create AuthenticationRequest object
+            AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+            authenticationRequest.setEmail(email);
+            authenticationRequest.setPassword(password);
+            User usr = userService.getUserByEmail(email);
+            try {
+                // Generate token using the generateAuthenticationToken method
+                String token = generateAuthenticationToken(authenticationRequest);
+
+                // Return token along with status
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", true);
+                response.put("token", token);
+                response.put("user", usr);
+
+                return ResponseEntity.ok(response);
+            } catch (AuthenticationException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+            }
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
         }
     }
+
+
 
     @PostMapping("/signup/user")
     public ResponseEntity<String> signUp(@RequestBody User user) {

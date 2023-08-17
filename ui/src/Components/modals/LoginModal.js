@@ -1,40 +1,36 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
 import { useDispatch } from 'react-redux';
+import { login } from "../../Actions/AuthAction"
+import { useHistory } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import Dashboard from "../userDashboard/Dashboard";
+
 
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const history = useHistory();
   const dispatch = useDispatch();
+  const history = useHistory();
 
-  const handleSaveChanges = async() => {
-    console.log("Email:", email);
-    console.log("Password:", password);
-    const user ={email,password};
-    
-      try {
-        if(email !== "" || password !==""){
-          const response = await axios.post("http://localhost:8081/api/user/login", user);
-          console.log("Response:", response.data);
-          if(response.data===true){
-            history.push("/dashboard");
-          }else{
-            Alert("Invalid Credential Try Again")
-          }
-          
-        }else{
-          Alert("All Fields Are Important")
-        }
-        onClose();
-      } catch (error) {
-        console.error("Error:", error);
+
+  const handleSaveChanges = async () => {
+    const user = { email, password };
+    try {
+      if (email !== "" || password !== "") {
+       const res= dispatch(login(user));
+       if(res){
+        history.push("/dashboard");
+       }
+        
+      } else {
+        Alert("All Fields Are Important");
       }
-    // Close the modal after handling the data
-    onClose();
+    } catch (error) {
+      console.error("Error:", error);
+    }
     
+    onClose();
   };
 
   return (
@@ -45,7 +41,7 @@ const LoginModal = ({ isOpen, onClose }) => {
       <Modal.Body>
         <form>
           <div className="mb-3">
-            <label for="exampleInputEmail1" className="form-label">
+            <label htmlFor="exampleInputEmail1" className="form-label">
               Email address
             </label>
             <input
@@ -56,8 +52,8 @@ const LoginModal = ({ isOpen, onClose }) => {
               onChange={(e) => setEmail(e.target.value)}
               aria-describedby="emailHelp"
             />
-            <div class="mb-3">
-              <label for="exampleInputPassword1" className="form-label">
+            <div className="mb-3">
+              <label htmlFor="exampleInputPassword1" className="form-label">
                 Password
               </label>
               <input

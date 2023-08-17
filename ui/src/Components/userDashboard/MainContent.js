@@ -20,7 +20,7 @@ const MainContent = ({ activePage }) => {
   return (
     <div className="main-container">
       <header className="header">
-      <a className="btn btn-light" style={{float:"right"}}>Logout</a>
+      <a href="/" className="btn btn-light" style={{float:"right"}}>Logout</a>
       <h3>User Singh</h3>
        
       </header>

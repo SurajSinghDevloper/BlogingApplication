@@ -19,7 +19,7 @@ const App = () => {
     if (!auth.authenticate) {
       dispatch(isUserLoggedIn());
     }
-  }, [])
+  }, []); 
 
   return (
     <Router>

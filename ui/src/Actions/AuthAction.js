@@ -1,41 +1,48 @@
-import RouteTo from "../Hoc/RouteTo"
+import RouteTo from "../Hoc/RouteTo";
 import { authConstant } from '../Constants/AuthConstant';
 
 export const login = (user) => {
-    console.log("👉👉 ~~ file: auth.action.js:6 ~~ login ~~ user:", user);
     return async (dispatch) => {
         dispatch({ type: authConstant.LOGIN_REQUEST });
+        
         try {
-            const res = await RouteTo.post(`createUser`, { ...user });
+            const res = await RouteTo.post(`${process.env.REACT_APP_BASE_URL}/user/login`, { ...user });
+            
             if (res.status === 200) {
                 const { token, user } = res.data;
                 localStorage.setItem("token", token);
-                localStorage.setItem("user", JSON.stringify(user));
-                dispatch({
+                const userJson = user
+                localStorage.setItem("user", JSON.stringify(userJson));
+
+                dispatch({  
                     type: authConstant.LOGIN_SUCCESS,
                     payload: { token, user }
                 });
             } else {
-                if (res.status === 400) {
-                    dispatch({
-                        type: authConstant.LOGIN_FAILURE,
-                        payload: { error: res.data.error }
-                    });
-                }
+                dispatch({
+                    type: authConstant.LOGIN_FAILURE,
+                    payload: { error: 'Failed to log in, please try again.' }
+                });
             }
         } catch (error) {
-            console.log("Error:", error);
-            dispatch({ type: authConstant.LOGIN_FAILURE });
+            console.error("Error:", error);
+            dispatch({
+                type: authConstant.LOGIN_FAILURE,
+                payload: { error: 'An error occurred while logging in.' }
+            });
         }
     };
 };
 
-
 export const isUserLoggedIn = () => {
-    return async dispatch => {
+    return (dispatch) => {
         const token = localStorage.getItem('token');
-        if (token) {
-            const user = JSON.parse(localStorage.getItem('user'));
+        console.log(token,"    token")
+        const userJSON = localStorage.getItem('user');
+        console.log(userJSON,"    userjson")
+
+        if (token && userJSON) {
+            const user = JSON.parse(userJSON);
             dispatch({
                 type: authConstant.LOGIN_SUCCESS,
                 payload: { token, user }
@@ -43,17 +50,17 @@ export const isUserLoggedIn = () => {
         } else {
             dispatch({
                 type: authConstant.LOGIN_FAILURE,
-                payload: { error: 'Failed To Login, try again!' }
+                payload: { error: 'Failed to log in, please try again.' }
             });
         }
-    }
-}
+    };
+};
 
 export const signout = () => {
-    return async dispatch => {
+    return (dispatch) => {
         localStorage.clear();
         dispatch({
             type: authConstant.LOGOUT_REQUEST
-        })
-    }
-}
+        });
+    };
+};
