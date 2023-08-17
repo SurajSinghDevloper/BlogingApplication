@@ -1,0 +1,38 @@
+ .centered-div-container {
+     display: flex;
+    width: auto;
+     justify-content: center;
+     border-color: aqua;
+     height: auto;
+ }
+
+ .centered-div {
+     text-align: center;
+     padding: 20px;
+     margin: 10px;
+     width: 350px;
+     transition: background-color 0.3s, transform 0.2s;
+     cursor: pointer;
+     
+ }
+
+ .centered-div:hover {
+     /* background-color: #f0f0f0; */
+     transform: scale(1.05);
+ }
+
+ .form-card {
+     /* background-color: #f8f9fa; */
+     border-radius: 10px;
+     padding: 20px;
+    
+     
+ }
+
+ .form-card h2 {
+     margin-bottom: 15px;
+ }
+
+ .form-card p {
+     margin-bottom: 5px;
+ }

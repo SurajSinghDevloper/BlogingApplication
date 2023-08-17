@@ -67,9 +67,12 @@ public class UserController {
     
     @PutMapping("/createUser")
     public ResponseEntity<?> saveUser(@RequestParam("name") String name,
-            @RequestParam("email") String username,
+            @RequestParam("username") String username,
+            @RequestParam("address") String address,
             @RequestParam("mobile") long mobile,
             @RequestParam("password") String password,
+            @RequestParam("securityQuestion") String securityQuestion,
+            @RequestParam("securityAnswer") String securityAnswer,
             @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
         // Validation for required fields and image file
         if (name.isEmpty() || username.isEmpty() || password.isEmpty()) {
@@ -79,8 +82,11 @@ public class UserController {
         User user = new User();
         user.setName(name);
         user.setusername(username);
+        user.setAddress(address);
         user.setMobile(mobile);
         user.setPassword(password);
+        user.setSecurityQuestion(securityQuestion);
+        user.setSecurityAnswer(securityAnswer);
 
         return ResponseEntity.ok(userService.createUser(user, imageFile));
     }

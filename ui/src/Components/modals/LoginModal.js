@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
-import { useDispatch } from 'react-redux';
-import { login } from "../../Actions/AuthAction"
+import { useDispatch } from "react-redux";
+import { login } from "../../Actions/AuthAction";
 import { useHistory } from "react-router-dom";
-import { Link } from 'react-router-dom';
-import Dashboard from "../userDashboard/Dashboard";
-
+import { Redirect } from "react-router-dom";
 
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
@@ -13,23 +11,21 @@ const LoginModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-
   const handleSaveChanges = async () => {
     const user = { email, password };
     try {
       if (email !== "" || password !== "") {
-       const res= dispatch(login(user));
-       if(res){
-        history.push("/dashboard");
-       }
-        
+        const res = await dispatch(login(user));
+        if (res) {
+          history.push("/dashboard");
+        }
       } else {
         Alert("All Fields Are Important");
       }
     } catch (error) {
       console.error("Error:", error);
     }
-    
+
     onClose();
   };
 
@@ -71,7 +67,9 @@ const LoginModal = ({ isOpen, onClose }) => {
         <Button variant="secondary" onClick={onClose}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleSaveChanges}>Save changes</Button>
+        <Button variant="primary" onClick={handleSaveChanges}>
+          Save changes
+        </Button>
       </Modal.Footer>
     </Modal>
   );

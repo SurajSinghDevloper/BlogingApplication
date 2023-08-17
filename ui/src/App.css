@@ -68,6 +68,7 @@
 }
 
 .sidebar {
+    
     width: 200px;
     color: #fff;
     padding-top: 20px;
@@ -109,7 +110,6 @@ background-image: linear-gradient(315deg, #0cbaba 0%, #380036f3 74%);
 
 .main-container {
     flex: 1;
-
     overflow: auto;
     background-color: #f4f4f4;
 }
@@ -118,7 +118,6 @@ background-image: linear-gradient(315deg, #0cbaba 0%, #380036f3 74%);
     color: #fff;
     padding: 10px;
     text-align: center;
-
     background-color: #0cbaba;
 background-image: linear-gradient(315deg, #0cbaba 0%, #380036 74%);
 
@@ -130,6 +129,9 @@ background-image: linear-gradient(315deg, #0cbaba 0%, #380036 74%);
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(110vh - 140px);
 }
 
 /* For screens smaller than 768px */

@@ -1,0 +1,49 @@
+.centered-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 140px);
+}
+
+.blog-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    /* Set a maximum width to prevent excessive stretching */
+}
+
+.blog-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.blog-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.blog-content {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.btn-like,
+.btn-dislike {
+    margin-right: 10px;
+}
+
+.comment-section {
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+.comment {
+    margin-bottom: 5px;
+    padding-left: 10px;
+}
