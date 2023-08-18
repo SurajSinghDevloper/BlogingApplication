@@ -1,38 +1,6 @@
 import RouteTo from "../Hoc/RouteTo";
 import { authConstant } from "../Constants/AuthConstant";
-
-// export const login = (user) => {
-//   return async (dispatch) => {
-//     dispatch({ type: authConstant.LOGIN_REQUEST });
-
-//     try {
-//       const res = await RouteTo.post(`/api/user/login`, { ...user });
-
-//       if (res.status === 200) {
-//         const { token, user } = res.data;
-//         localStorage.setItem("token", token);
-//         const userJson = user;
-//         localStorage.setItem("user", JSON.stringify(userJson));
-
-//         dispatch({
-//           type: authConstant.LOGIN_SUCCESS,
-//           payload: { token, user },
-//         });
-//       } else {
-//         dispatch({
-//           type: authConstant.LOGIN_FAILURE,
-//           payload: { error: "Failed to log in, please try again." },
-//         });
-//       }
-//     } catch (error) {
-//       console.error("Error:", error);
-//       dispatch({
-//         type: authConstant.LOGIN_FAILURE,
-//         payload: { error: "An error occurred while logging in." },
-//       });
-//     }
-//   };
-// };
+import { getCookie, setCookie } from "../Configuration/Cookies";
 
 export const login = (user) => {
   return async (dispatch) => {
@@ -43,10 +11,9 @@ export const login = (user) => {
 
       if (res.status === 200) {
         const { token, user } = res.data;
-        localStorage.setItem("token", token);
         const userJson = user;
         localStorage.setItem("user", JSON.stringify(userJson));
-
+        setCookie("token", JSON.stringify(token), 1);
         dispatch({
           type: authConstant.LOGIN_SUCCESS,
           payload: { token, user },
@@ -69,10 +36,10 @@ export const login = (user) => {
 
 export const isUserLoggedIn = () => {
   return (dispatch) => {
-    const token = localStorage.getItem("token");
-    console.log(token, "    token");
+    let token = "";
+    token = getCookie(token);
+    console.log("TOKEN FROM isUserLoggedIn --------->>>>>", token);
     const userJSON = localStorage.getItem("user");
-    console.log(userJSON, "    userjson");
 
     if (token && userJSON) {
       const user = JSON.parse(userJSON);
@@ -83,7 +50,7 @@ export const isUserLoggedIn = () => {
     } else {
       dispatch({
         type: authConstant.LOGIN_FAILURE,
-        payload: { error: "Failed to log in, please try again." },
+        payload: { error: "User is not logged in." },
       });
     }
   };

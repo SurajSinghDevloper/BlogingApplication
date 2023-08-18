@@ -19,8 +19,10 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log("From APP file ===== AUTH VALUE  =======", auth);
     if (!auth.authenticate) {
       dispatch(isUserLoggedIn());
+      <Redirect to="/" />;
     }
   }, []);
 
@@ -28,12 +30,10 @@ const App = () => {
     <Router>
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route exact path="/dashboard" component={Dashboard} />
+        <PrivateRoute path="/dashboard" auth={auth} component={Dashboard} />
         <Route
-          exact
-          path="/"
           render={() =>
-            isUserLoggedIn ? (
+            auth.authenticate ? (
               <Redirect to="/dashboard" />
             ) : (
               <Redirect to="/login" />

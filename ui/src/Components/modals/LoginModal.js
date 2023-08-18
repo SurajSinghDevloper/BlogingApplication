@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../Actions/AuthAction";
 import { useHistory } from "react-router-dom";
-import { Redirect } from "react-router-dom";
 
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const history = useHistory();
+  const auth = useSelector((state) => state.auth);
 
   const handleSaveChanges = async () => {
     const user = { email, password };
     try {
       if (email !== "" || password !== "") {
         const res = await dispatch(login(user));
-        if (res) {
+        if (auth.authenticate) {
           history.push("/dashboard");
         }
       } else {
