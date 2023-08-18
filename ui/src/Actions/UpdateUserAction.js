@@ -5,7 +5,7 @@ export const updateUserProfile = (profileData) => {
   return async (dispatch, getState) => {
     dispatch({ type: userConstant.UPDATE_PROFILE_REQUEST });
     const formData = new FormData();
-    formData.append("name", profileData.fullName);
+    formData.append("name", profileData.name);
     formData.append("username", profileData.username);
     formData.append("email", profileData.email);
     formData.append("address", profileData.address);
@@ -14,9 +14,18 @@ export const updateUserProfile = (profileData) => {
     formData.append("securityQuestion", profileData.securityQuestion);
     formData.append("securityAnswer", profileData.securityAnswer);
     formData.append("imageFile", profileData.profileImg);
+
+    const token=localStorage.getItem("token");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+    
     try {
       // Assuming you have an API endpoint for updating user profile
-      const res = await RouteTo.put(`/api/createUser`, formData);
+      const res = await RouteTo.put(`/api/updateUser`, formData,config);
 
       if (res.status === 200) {
         const updatedUser = res.data.user;

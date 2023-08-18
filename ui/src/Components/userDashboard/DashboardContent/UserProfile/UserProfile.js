@@ -1,101 +1,3 @@
-// import React from "react";
-// import "./UserProfile.css";
-// function UserProfile({ user }) {
-//   return (
-//     <>
-// <div className="centered-div-container">
-//   <div className="centered-div">
-//     <div className="card mb-4">
-//       <div className="card-body text-center">
-//         <img
-//           src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-//           alt="avatar"
-//           className="rounded-circle img-fluid"
-//           style={{ width: "150px;" }}
-//         />
-//         <h5 className="my-3">{user.name}</h5>
-//         <p className="text-muted mb-1">Full Stack Developer</p>
-//         <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
-//         <div className="d-flex justify-content-center mb-2">
-//           <button type="button" className="btn btn-primary">
-//             Follow
-//           </button>
-//           <button type="button" className="btn btn-outline-primary ms-1">
-//             Message
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   </div>
-//         <div className="card-body" style={{ width: "546px" }}>
-//           <div className="form-card">
-//             <form>
-//               <div className="form-group">
-//                 <label htmlFor="name">Full Name</label>
-//                 <input
-//                   type="text"
-//                   className="form-control"
-//                   placeholder="Enter Name"
-//                 />
-//               </div>
-//               <div className="form-group">
-//                 <label htmlFor="exampleInputEmail1">Email address</label>
-//                 <input
-//                   type="email"
-//                   className="form-control"
-//                   id="exampleInputEmail1"
-//                   aria-describedby="emailHelp"
-//                   placeholder="Enter email"
-//                 />
-//               </div>
-//               <div className="form-group">
-//                 <label htmlFor="name">Mobile</label>
-//                 <input
-//                   type="text"
-//                   className="form-control"
-//                   placeholder="Enter Mobile"
-//                 />
-//               </div>
-//               <div className="form-group">
-//                 <label htmlFor="name">Address</label>
-//                 <input
-//                   type="text"
-//                   className="form-control"
-//                   placeholder="Enter Address"
-//                 />
-//               </div>
-//               <div className="form-group">
-//                 <label htmlFor="exampleInputPassword1">Password</label>
-//                 <input
-//                   type="password"
-//                   className="form-control"
-//                   id="exampleInputPassword1"
-//                   placeholder="Password"
-//                 />
-//               </div>
-//               <div className="form-group">
-//                 <label htmlFor="file">Profile Pic</label>
-//                 <input
-//                   type="file"
-//                   className="form-control"
-//                   placeholder="Profile Image"
-//                 />
-//               </div>
-//               <div className=" align-content-xl-center mt-5">
-//                 <button type="submit" class="btn btn-primary">
-//                   Update
-//                 </button>
-//               </div>
-//             </form>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// }
-
-// export default UserProfile;
-
 import React from "react";
 import { connect } from "react-redux";
 import { updateUserProfile } from "../../../../Actions/UpdateUserAction"; // Import the action to update user profile
@@ -107,7 +9,7 @@ class UserProfile extends React.Component {
     super(props);
 
     this.state = {
-      fullName: "",
+      name: "",
       username: "",
       email: "",
       mobile: "",
@@ -115,7 +17,7 @@ class UserProfile extends React.Component {
       password: "",
       securityQuestion: "",
       securityAnswer: "",
-      profileImg: null,
+      profileImg: "",
     };
   }
 
@@ -124,7 +26,7 @@ class UserProfile extends React.Component {
     const { user } = this.props;
     if (user) {
       this.setState({
-        fullName: user.fullName || "",
+        name: user.name || "",
         username: user.username || "",
         email: user.email || "",
         mobile: user.mobile || "",
@@ -143,14 +45,18 @@ class UserProfile extends React.Component {
   };
 
   handleFileChange = (event) => {
-    this.setState({ profilePic: event.target.files[0] });
+    this.setState({ profileImg: event.target.files[0] });
+  };
+
+   handleImageChange = e => {
+    this.setState({profileImg:e.target.files[0]});
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
     // Dispatch action to update user profile
     const {
-      fullName,
+      name,
       email,
       mobile,
       address,
@@ -160,7 +66,7 @@ class UserProfile extends React.Component {
       profileImg,
     } = this.state;
     const updatedProfile = {
-      fullName,
+      name,
       email,
       mobile,
       address,
@@ -209,9 +115,9 @@ class UserProfile extends React.Component {
                     <input
                       type="text"
                       className="form-control"
-                      name="fullName"
+                      name="name"
                       placeholder="Enter Name"
-                      value={this.state.fullName || user.name}
+                      value={this.state.name}
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -224,7 +130,7 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="userName"
                       placeholder="Enter User Name"
-                      value={this.state.username || user.username}
+                      value={this.state.username }
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -239,7 +145,7 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="email"
                       placeholder="Enter email"
-                      value={this.state.email || user.email}
+                      value={this.state.email }
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -252,7 +158,7 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="address"
                       placeholder="Enter Name"
-                      value={this.state.address || user.address}
+                      value={this.state.address }
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -267,7 +173,7 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="mobile"
                       placeholder="Enter Mobile"
-                      value={this.state.mobile || user.mobile}
+                      value={this.state.mobile }
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -280,7 +186,7 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="password"
                       placeholder="Enter Password"
-                      value={this.state.password || user.password}
+                      value={this.state.password}
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -296,7 +202,7 @@ class UserProfile extends React.Component {
                       name="securityQuestion"
                       placeholder="Enter Name"
                       value={
-                        this.state.securityQuestion || user.securityQuestion
+                        this.state.securityQuestion
                       }
                       onChange={this.handleInputChange}
                     />
@@ -310,7 +216,7 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="securityAnswer"
                       placeholder="Enter Security Answer"
-                      value={this.state.securityAnswer || user.securityAnswer}
+                      value={this.state.securityAnswer }
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -323,7 +229,7 @@ class UserProfile extends React.Component {
                   type="file"
                   className="form-control"
                   name="profileImg"
-                  onChange={this.handleFileChange}
+                  onChange={this.handleImageChange}
                 />
               </div>
               <div className="align-content-xl-center mt-5">
