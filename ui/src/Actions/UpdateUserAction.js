@@ -1,5 +1,7 @@
 import RouteTo from "../Hoc/RouteTo";
 import { userConstant } from "../Constants/UserConstant";
+import {  getCookie } from "../Configuration/Cookies";
+
 
 export const updateUserProfile = (profileData) => {
   return async (dispatch, getState) => {
@@ -15,7 +17,8 @@ export const updateUserProfile = (profileData) => {
     formData.append("securityAnswer", profileData.securityAnswer);
     formData.append("imageFile", profileData.profileImg);
 
-    const token=localStorage.getItem("token");
+    let token ="";
+    token=getCookie(token);
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -25,8 +28,8 @@ export const updateUserProfile = (profileData) => {
     
     try {
       // Assuming you have an API endpoint for updating user profile
-      const res = await RouteTo.put(`/api/updateUser`, formData,config);
-
+      const res = await RouteTo.post(`/user/api/action/updateUser`,config,formData);
+      console.log("RESPONE FROM COR KA BAP =======    ",res.status);
       if (res.status === 200) {
         const updatedUser = res.data.user;
 

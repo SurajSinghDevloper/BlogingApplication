@@ -7,7 +7,7 @@ export const login = (user) => {
     dispatch({ type: authConstant.LOGIN_REQUEST });
 
     try {
-      const res = await RouteTo.post(`/api/user/login`, { ...user });
+      const res = await RouteTo.post(`/user/api/auth/login`, { ...user });
 
       if (res.status === 200) {
         const { token, user } = res.data;
