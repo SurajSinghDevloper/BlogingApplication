@@ -25,8 +25,8 @@ const reducer = (state = initialState, action) => {
         ...state,
         user: action.payload.user,
         token: action.payload.token,
-        authenticate: true,
         authenticating: false,
+        authenticate: true,
       };
     case authConstant.LOGOUT_REQUEST:
       return initialState;

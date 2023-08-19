@@ -25,4 +25,12 @@ function getCookie(name) {
   return null;
 }
 
-export { setCookie, getCookie };
+function clearCookie(name) {
+  const expirationDate = new Date();
+  expirationDate.setFullYear(expirationDate.getFullYear() - 1); // Set the date to the past year
+  const cookieValue =
+    encodeURIComponent("") + "; expires=" + expirationDate.toUTCString();
+  document.cookie = name + "=" + cookieValue + "; path=/";
+}
+
+export { setCookie, getCookie, clearCookie };

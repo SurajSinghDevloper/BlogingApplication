@@ -2,23 +2,25 @@ import React, { useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../Actions/AuthAction";
-import { useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom/cjs/react-router-dom";
 
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const history = useHistory();
   const auth = useSelector((state) => state.auth);
-
+  const handleRedirect = () => {
+    if (auth.authenticate === true) {
+      return <Redirect to="/dashboard" />;
+    } else {
+      return null; // Return null if no redirection is required
+    }
+  };
   const handleSaveChanges = async () => {
     const user = { email, password };
     try {
       if (email !== "" || password !== "") {
-        const res = await dispatch(login(user));
-        if (auth.authenticate) {
-          history.push("/dashboard");
-        }
+        await dispatch(login(user));
       } else {
         Alert("All Fields Are Important");
       }
@@ -62,6 +64,7 @@ const LoginModal = ({ isOpen, onClose }) => {
             </div>
           </div>
         </form>
+        {handleRedirect()}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>

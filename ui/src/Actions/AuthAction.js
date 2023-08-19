@@ -1,6 +1,6 @@
 import RouteTo from "../Hoc/RouteTo";
 import { authConstant } from "../Constants/AuthConstant";
-import { getCookie, setCookie } from "../Configuration/Cookies";
+import { clearCookie, getCookie, setCookie } from "../Configuration/Cookies";
 
 export const login = (user) => {
   return async (dispatch) => {
@@ -36,17 +36,25 @@ export const login = (user) => {
 
 export const isUserLoggedIn = () => {
   return (dispatch) => {
-    let token = "";
-    token = getCookie(token);
+    const token = getCookie("token"); // Use the correct cookie name
     console.log("TOKEN FROM isUserLoggedIn --------->>>>>", token);
+
     const userJSON = localStorage.getItem("user");
 
     if (token && userJSON) {
-      const user = JSON.parse(userJSON);
-      dispatch({
-        type: authConstant.LOGIN_SUCCESS,
-        payload: { token, user },
-      });
+      try {
+        const user = JSON.parse(userJSON);
+        dispatch({
+          type: authConstant.LOGIN_SUCCESS,
+          payload: { token: token, user: user },
+        });
+      } catch (error) {
+        console.error("Error parsing user JSON:", error);
+        dispatch({
+          type: authConstant.LOGIN_FAILURE,
+          payload: { error: "Error parsing user data." },
+        });
+      }
     } else {
       dispatch({
         type: authConstant.LOGIN_FAILURE,
@@ -59,6 +67,7 @@ export const isUserLoggedIn = () => {
 export const signout = () => {
   return (dispatch) => {
     localStorage.clear();
+    clearCookie("token");
     dispatch({
       type: authConstant.LOGOUT_REQUEST,
     });

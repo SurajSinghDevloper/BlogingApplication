@@ -7,6 +7,9 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,46 +59,114 @@ public class UserController {
 	@Value("${blog.image.upload.path}")
 	private String imageUploadPath;
 
-	@PostMapping("/updateUser")
-	public ResponseEntity<?> updateUser(@RequestParam("name") String name, @RequestParam("username") String username,
-			@RequestParam("email") String email, @RequestParam("address") String address,
-			@RequestParam("mobile") long mobile, @RequestParam("password") String password,
-			@RequestParam("securityQuestion") String securityQuestion,
-			@RequestParam("securityAnswer") String securityAnswer, @RequestParam("imageFile") MultipartFile imageFile,
-			@AuthenticationPrincipal Principal principal) throws IOException {
+//	@PostMapping("/updateUser")
+//	public ResponseEntity<?> updateUser(@RequestParam("name") String name, @RequestParam("username") String username,
+//			@RequestParam("email") String email, @RequestParam("address") String address,
+//			@RequestParam("mobile") long mobile, @RequestParam("password") String password,
+//			@RequestParam("securityQuestion") String securityQuestion,
+//			@RequestParam("securityAnswer") String securityAnswer, @RequestParam("imageFile") MultipartFile imageFile,
+//			@AuthenticationPrincipal Principal principal) throws IOException {
+//
+//		 String authenticatedUsername = principal != null ? principal.getName() : null;
+//		    System.out.println("Authenticated Username:"+ authenticatedUsername); // Add this line for debugging
+//
+//		    if (authenticatedUsername == null || !authenticatedUsername.equals(email)) {
+//		        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
+//		    }
+//
+//		User existingUser = userService.getUserByEmail(email);
+//		if (existingUser == null) {
+//			return ResponseEntity.notFound().build();
+//		}
+//
+//		if (name.isEmpty() || username.isEmpty() || password.isEmpty()) {
+//			return ResponseEntity.badRequest().body("Required fields are missing.");
+//		}
+//
+//		existingUser.setName(name);
+//		existingUser.setusername(username);
+//		existingUser.setAddress(address);
+//		existingUser.setMobile(mobile);
+//		existingUser.setPassword(password);
+//		existingUser.setSecurityQuestion(securityQuestion);
+//		existingUser.setSecurityAnswer(securityAnswer);
+//
+//		User updatedUser = userService.createUser(existingUser, imageFile);
+//		if (updatedUser != null) {
+//			return ResponseEntity.ok("Profile updated successfully");
+//		} else {
+//			return ResponseEntity.internalServerError().build();
+//		}
+//
+//	}
+	
 
-		 String authenticatedUsername = principal != null ? principal.getName() : null;
-		    System.out.println("Authenticated Username:"+ authenticatedUsername); // Add this line for debugging
+	@PostMapping("/updateUser")
+	public ResponseEntity<?> updateUser(
+	        @RequestParam("name") String name,
+	        @RequestParam("username") String username,
+	        @RequestParam("email") String email,
+	        @RequestParam("address") String address,
+	        @RequestParam("mobile") long mobile,
+	        @RequestParam("password") String password,
+	        @RequestParam("securityQuestion") String securityQuestion,
+	        @RequestParam("securityAnswer") String securityAnswer,
+	        @RequestParam("imageFile") MultipartFile imageFile,
+	        @RequestHeader("Authorization") String authorizationHeader,
+	        @AuthenticationPrincipal Principal principal,
+	        HttpServletRequest request) throws IOException {
+		
+		  String authenticatedUsername = principal != null ? principal.getName() : null;
+		    System.out.println("Authenticated Username: " + authenticatedUsername);
 
 		    if (authenticatedUsername == null || !authenticatedUsername.equals(email)) {
 		        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
 		    }
 
-		User existingUser = userService.getUserByEmail(email);
-		if (existingUser == null) {
-			return ResponseEntity.notFound().build();
-		}
+		    // Extract the token from the Authorization header
+		    String receivedToken = authorizationHeader.replace("Bearer ", "");
 
-		if (name.isEmpty() || username.isEmpty() || password.isEmpty()) {
-			return ResponseEntity.badRequest().body("Required fields are missing.");
-		}
+		    // Compare the received token with the token from the frontend
+		    String frontendToken = this.extractTokenFromFrontend(request);
+		    if (!receivedToken.equals(frontendToken)) {
+		        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+		    }
 
-		existingUser.setName(name);
-		existingUser.setusername(username);
-		existingUser.setAddress(address);
-		existingUser.setMobile(mobile);
-		existingUser.setPassword(password);
-		existingUser.setSecurityQuestion(securityQuestion);
-		existingUser.setSecurityAnswer(securityAnswer);
+	    User existingUser = userService.getUserByEmail(email);
+	    if (existingUser == null) {
+	        return ResponseEntity.notFound().build();
+	    }
 
-		User updatedUser = userService.createUser(existingUser, imageFile);
-		if (updatedUser != null) {
-			return ResponseEntity.ok("Profile updated successfully");
-		} else {
-			return ResponseEntity.internalServerError().build();
-		}
+	    if (name.isEmpty() || username.isEmpty() || password.isEmpty()) {
+	        return ResponseEntity.badRequest().body("Required fields are missing.");
+	    }
 
+	    existingUser.setName(name);
+	    existingUser.setusername(username);
+	    existingUser.setAddress(address);
+	    existingUser.setMobile(mobile);
+	    existingUser.setPassword(password);
+	    existingUser.setSecurityQuestion(securityQuestion);
+	    existingUser.setSecurityAnswer(securityAnswer);
+
+	    User updatedUser = userService.createUser(existingUser, imageFile);
+	    if (updatedUser != null) {
+	        return ResponseEntity.ok("Profile updated successfully");
+	    } else {
+	        return ResponseEntity.internalServerError().build();
+	    }
 	}
+
+	private String extractTokenFromFrontend(HttpServletRequest request) {
+	    String authorizationHeader = request.getHeader("Authorization");
+	    if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	        return authorizationHeader.replace("Bearer ", "");
+	    }
+	    return null; // Return null if no token is found
+	}
+
+
+
 
 	@GetMapping("/getUser/{id}")
 	public ResponseEntity<User> getUserById(@PathVariable int id) {
