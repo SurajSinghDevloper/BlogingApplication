@@ -6,7 +6,7 @@ export const signup = (user) => {
   return async (dispatch) => {
     dispatch({ type: userConstant.USER_REGISTER_REQUEST });
     try {
-      const res = await RouteTo.post(`/user/api/auth/signup`, { ...user });
+      const res = await RouteTo.post(`/user/signup`, { ...user });
 
       if (res.status === 200) {
         const { message } = res.data;

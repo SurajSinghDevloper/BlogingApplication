@@ -43,9 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	    
 	    @Override
 	    protected void configure(HttpSecurity http) throws Exception {
-	        http.csrf().disable()
+	    	 http
+	         .cors().and()
+	         .csrf().disable()
 	            .authorizeRequests()
-	                .antMatchers("/user/api/auth/**").permitAll() // Allow authentication endpoints
+	                .antMatchers("/user/signup**","/user/login**").permitAll() // Allow authentication endpoints
 	                .anyRequest().authenticated() // Require authentication for other endpoints
 	            .and()
 	            .exceptionHandling().authenticationEntryPoint(new JwtAuthenticationEntryPoint())
@@ -53,6 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 	        // Add JWT token filter before UsernamePasswordAuthenticationFilter
-	        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//	        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 	    }
 }

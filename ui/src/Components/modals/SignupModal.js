@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { signup } from "../../Actions/UserAction";
 
 
 const SignupModal = ({ isOpen, onClose }) => {
@@ -8,7 +10,7 @@ const SignupModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
-
+  const dispatch = useDispatch();
 
   const handleSaveChanges = async() => {
     console.log("Full Name:", fullName);
@@ -19,10 +21,10 @@ const SignupModal = ({ isOpen, onClose }) => {
       email,
       mobile,
       password,};
-
+      
       try {
         if(fullName !== ""||email !== "" || mobile !==""|| password !==""){
-          const response = await axios.post("http://localhost:8081/api/signup/user", user);
+          const response = dispatch(signup(user));
           console.log("Response:", response.data);
         }else{
           Alert("All Fields Are Important")

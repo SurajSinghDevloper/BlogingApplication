@@ -39,7 +39,7 @@ public class UsrController {
 	private UserService userService;
 
 
-	@PostMapping("/api/auth/signup")
+	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody User newUser) {
 	    String hashedPassword = passwordEncoder.encode(newUser.getPassword()); // Hash the password
 	    newUser.setPassword(hashedPassword); // Set the hashed password
@@ -48,7 +48,7 @@ public class UsrController {
 	}
 	
 	
-	@PostMapping("/api/auth/login")
+	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody User loginUser) {
 	    try {
 	        Authentication authentication = authenticationManager.authenticate(
