@@ -4,26 +4,36 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.blog.entity.Role;
 import com.blog.entity.User;
+import com.blog.repository.RoleRepository;
 import com.blog.repository.UsersRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     UsersRepository usersRepository;
-
+    @Autowired
+    RoleRepository roleRepository;
+    
     @Value("${user.image.upload.path}")
     private String imageUploadPath;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     @Override
     public User createUser(User user, MultipartFile imageFile) {
         try {
@@ -69,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User loginUser(String username, String password) {
         User user = usersRepository.findByEmail(username);
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && user.getUserPassword().equals(password)) {
             return user;
         } else {
             return null; // Return null if the user is not found or password doesn't match
@@ -102,4 +112,37 @@ public class UserServiceImpl implements UserService {
 		User usr = usersRepository.findByEmail(username);
         return usr;
 	}
+	
+    public String getEncodedPassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
+    public void initRoleAndUser() {
+        Role adminRole = new Role();
+        adminRole.setRoleName("Admin");
+        adminRole.setRoleDescription("Admin role");
+        roleRepository.save(adminRole);
+
+        Role userRole = new Role();
+        userRole.setRoleName("User");
+        userRole.setRoleDescription("Default role for newly created records");
+        roleRepository.save(userRole);
+
+        User adminUser = new User();
+        adminUser.setUserName("admin123");
+        adminUser.setUserPassword(getEncodedPassword("1234")); // You need to implement getEncodedPassword()
+        Set<Role> adminRoles = new HashSet<>();
+        adminRoles.add(adminRole);
+        adminUser.setRoles(adminRoles); // Corrected method name to setRoles()
+        usersRepository.save(adminUser);
+    }
+    
+    public User registerNewUser(User user) {
+        Role role = roleRepository.findById("User").get();
+        Set<Role> userRoles = new HashSet<>();
+        userRoles.add(role);
+        user.setRoles(userRoles);
+        return usersRepository.save(user);
+    }
+
 }

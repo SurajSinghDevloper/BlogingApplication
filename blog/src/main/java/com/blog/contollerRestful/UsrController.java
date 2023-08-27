@@ -3,6 +3,7 @@ package com.blog.contollerRestful;
 
 import java.io.IOException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +42,8 @@ public class UsrController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody User newUser) {
-	    String hashedPassword = passwordEncoder.encode(newUser.getPassword()); // Hash the password
-	    newUser.setPassword(hashedPassword); // Set the hashed password
+	    String hashedPassword = passwordEncoder.encode(newUser.getUserPassword()); // Hash the password
+	    newUser.setUserPassword(hashedPassword); // Set the hashed password
 	    userRepository.save(newUser);
 	    return ResponseEntity.ok("User registered successfully");
 	}
@@ -54,13 +55,13 @@ public class UsrController {
 	        Authentication authentication = authenticationManager.authenticate(
 	            new UsernamePasswordAuthenticationToken(
 	                loginUser.getEmail(),
-	                loginUser.getPassword()
+	                loginUser.getUserPassword()
 	            )
 	        );
 	        
 	        User user = userRepository.findByEmail(loginUser.getEmail());
 	        UserDetails userDetails = userDetailsService.loadUserByUsername(loginUser.getEmail());
-	        String token = jwtUtil.generateToken(userDetails.getUsername());
+	        String token = jwtUtil.generateToken(userDetails);
 	        
 	        // Create a response object with token and user details
 	        LoginResponse loginResponse = new LoginResponse(token, user);
@@ -72,40 +73,47 @@ public class UsrController {
 	}
 
     
-    @PostMapping("/api/action/updateUser")
-    public ResponseEntity<?> updateUser(
-            @RequestParam("name") String name,
-            @RequestParam("username") String username,
-            @RequestParam("address") String address,
-            @RequestParam("mobile") long mobile,
-            @RequestParam("password") String password,
-            @RequestParam("securityQuestion") String securityQuestion,
-            @RequestParam("securityAnswer") String securityAnswer,
-            @RequestParam("imageFile") MultipartFile imageFile
-    ) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
-        }
+	@PutMapping("/updateUser")
+	public ResponseEntity<String> updateUser(
+	        @RequestParam("name") String name,
+	        @RequestParam("email") String email,
+	        @RequestParam("username") String username,
+	        @RequestParam("address") String address,
+	        @RequestParam("mobile") long mobile,
+	        @RequestParam("password") String password,
+	        @RequestParam("securityQuestion") String securityQuestion,
+	        @RequestParam("securityAnswer") String securityAnswer,
+	        @RequestParam("imageFile") MultipartFile imageFile,
+	        @AuthenticationPrincipal UserDetails userDetails
+	) throws IOException {
+	    
+	    String authenticatedUsername = userDetails.getUsername();
+	    System.out.println("authenticatedUsername ==========  " + authenticatedUsername);
+	    
+	    if (!authenticatedUsername.equals(username)) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+	    }
 
-        String authenticatedUsername = authentication.getName();
-        User existingUser = userService.getUserByEmail(authenticatedUsername);
+	    User existingUser = userService.getUserByEmail(authenticatedUsername);
 
-        if (existingUser == null) {
-            return ResponseEntity.notFound().build();
-        }
+	    if (existingUser == null) {
+	        return ResponseEntity.notFound().build();
+	    }
 
-        if (name.isEmpty() || username.isEmpty() || password.isEmpty()) {
-            return ResponseEntity.badRequest().body("Required fields are missing.");
-        }
+	    if (name.isEmpty() || username.isEmpty()) {
+	        return ResponseEntity.badRequest().body("Name and username are required.");
+	    }
+
+	    // Only update password if it's provided, to avoid unintentionally changing it
+	    if (!password.isEmpty()) {
+	        existingUser.setUserPassword(passwordEncoder.encode(password));
+	    }
 
         existingUser.setName(name);
-        existingUser.setusername(username);
-        existingUser.setAddress(address);
-        existingUser.setMobile(mobile);
-        existingUser.setPassword(passwordEncoder.encode(password)); // You might want to hash the new password here
-        existingUser.setSecurityQuestion(securityQuestion);
-        existingUser.setSecurityAnswer(securityAnswer);
+        existingUser.setEmail(email);
+        existingUser.setUserName(username);
+        existingUser.setUserPassword(passwordEncoder.encode(password)); // You might want to hash the new password here
+
 
         User updatedUser = userService.createUser(existingUser, imageFile);
         if (updatedUser != null) {

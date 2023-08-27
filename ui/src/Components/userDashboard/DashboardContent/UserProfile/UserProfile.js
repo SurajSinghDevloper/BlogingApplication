@@ -27,7 +27,7 @@ class UserProfile extends React.Component {
     if (user) {
       this.setState({
         name: user.name || "",
-        username: user.username || "",
+        username: user.username ,
         email: user.email || "",
         mobile: user.mobile || "",
         address: user.address || "",

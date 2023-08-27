@@ -16,7 +16,6 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("From APP file ===== AUTH VALUE  =======", auth.authenticate);
     if (!auth.authenticate) {
       dispatch(isUserLoggedIn());
     }

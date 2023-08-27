@@ -18,17 +18,19 @@ export const updateUserProfile = (profileData) => {
     formData.append("imageFile", profileData.profileImg);
 
     let token ="";
-    token=getCookie(token);
-    const config = {
+    token=getCookie("token");
+    console.log("Token from Update_User_Action ====  ", token);
+    const requestOptions = {
+      method: 'PUT',
       headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
-      }
+        Authorization: `Bearer ${token}`
+      },
+      body: formData
     };
     
     try {
       // Assuming you have an API endpoint for updating user profile
-      const res = await RouteTo.post(`/user/api/action/updateUser`,config,formData);
+      const res = await RouteTo.post(`/user/updateUser`,requestOptions);
       console.log("RESPONE FROM COR KA BAP =======    ",res.status);
       if (res.status === 200) {
         const updatedUser = res.data.user;
