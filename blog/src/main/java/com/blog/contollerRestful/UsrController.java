@@ -72,7 +72,7 @@ public class UsrController {
 	}
 
     
-    @PostMapping("/api/action/updateUser")
+    @PostMapping("/action/updateUser")
     public ResponseEntity<?> updateUser(
             @RequestParam("name") String name,
             @RequestParam("username") String username,
@@ -81,14 +81,25 @@ public class UsrController {
             @RequestParam("password") String password,
             @RequestParam("securityQuestion") String securityQuestion,
             @RequestParam("securityAnswer") String securityAnswer,
-            @RequestParam("imageFile") MultipartFile imageFile
+            @RequestParam("imageFile") MultipartFile imageFile,
+            @RequestHeader("Authorization") String authorizationHeader
     ) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
-        }
+    	 String jwt = null;
+    	    if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+    	        jwt = authorizationHeader.substring(7);
+    	    }
 
-        String authenticatedUsername = authentication.getName();
+    	    // Validate the token
+    	    if (!jwtUtil.validateToken(jwt)) {
+    	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+    	    }
+
+    	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	    if (authentication == null || !authentication.isAuthenticated()) {
+    	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+    	    }
+
+    	    String authenticatedUsername = authentication.getName();
         User existingUser = userService.getUserByEmail(authenticatedUsername);
 
         if (existingUser == null) {
