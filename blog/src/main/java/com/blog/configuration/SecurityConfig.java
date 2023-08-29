@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	         .csrf().disable()
 	            .authorizeRequests()
 	                .antMatchers("/user/signup**","/user/login**").permitAll() // Allow authentication endpoints
-	                .anyRequest().authenticated() // Require authentication for other endpoints
+	                .anyRequest().permitAll() // Require authentication for other endpoints
 	            .and()
 	            .exceptionHandling().authenticationEntryPoint(new JwtAuthenticationEntryPoint())
 	            .and()

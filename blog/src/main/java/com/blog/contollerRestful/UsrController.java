@@ -72,7 +72,7 @@ public class UsrController {
 	}
 
     
-    @PostMapping("/action/updateUser")
+    @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(
             @RequestParam("name") String name,
             @RequestParam("username") String username,
@@ -84,13 +84,13 @@ public class UsrController {
             @RequestParam("imageFile") MultipartFile imageFile,
             @RequestHeader("Authorization") String authorizationHeader
     ) throws IOException {
-    	 String jwt = null;
+    	 String jwt = "";
     	    if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-    	        jwt = authorizationHeader.substring(7);
+    	        jwt = authorizationHeader.substring(8);
     	    }
-
+    	    System.out.println("JWT COMMING ======  "+jwt);
     	    // Validate the token
-    	    if (!jwtUtil.validateToken(jwt)) {
+    	    if (!jwtUtil.validateToken(jwt, userDetailsService.loadUserByUsername(username))) {
     	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
     	    }
 
