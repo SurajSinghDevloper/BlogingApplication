@@ -1,34 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { updateUserProfile } from "../../../../Actions/UpdateUserAction"; // Import the action to update user profile
+import { useSelector, useDispatch } from "react-redux";
+import { updateUserProfile } from "../../../../Actions/UpdateUserAction"; // Import both actions from the correct file
 import "./UserProfile.css";
 import { Col, Row } from "react-bootstrap";
+import { updateUserProfileImage } from "../../../../Actions/UpdateProfileImgAction";
 
-const UserProfile = ({ user, updateUserProfile }) => {
+const UserProfile = () => {
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const [profileImage, setProfileImage] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
-    username: "",
+    bio: "",
     email: "",
     mobile: "",
     address: "",
     password: "",
     securityQuestion: "",
     securityAnswer: "",
-    profileImg: "",
+    gender: "",
   });
 
   useEffect(() => {
-    // Populate form fields with user data from props
     if (user) {
       setFormData({
         name: user.name || "",
-        username: user.username || "",
+        username: user.bio || "",
         email: user.email || "",
         mobile: user.mobile || "",
         address: user.address || "",
         password: user.password || "",
         securityQuestion: user.securityQuestion || "",
-        profileImg: user.profileImg || "",
+        gender: user.gender || "",
         securityAnswer: user.securityAnswer || "",
       });
     }
@@ -39,18 +42,21 @@ const UserProfile = ({ user, updateUserProfile }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleImageChange = (e) => {
-    setFormData({ ...formData, profileImg: e.target.files[0] });
-  };
 
-  const handleProfileImageChange = (e) => {
-    setFormData({ profileImg: e.target.files[0] });
+  const handleProfileImageSubmit = (e) => {
+    e.preventDefault();
+    // Update the profile image using the provided action
+    dispatch(updateUserProfileImage(profileImage, user.email));
   };
-
+  
+  const handleProfileImage = (e) => {
+    setProfileImage(e.target.files[0]);
+  };
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     // Dispatch action to update user profile
-    updateUserProfile(formData);
+    dispatch(updateUserProfile(formData));
   };
 
   return (
@@ -61,12 +67,12 @@ const UserProfile = ({ user, updateUserProfile }) => {
             <img
               src={
                 process.env.REACT_APP_BASE_URL +
-                "/user/images/" +
+                "user/images/" +
                 user.profileImg
               }
               alt="avatar"
               className="rounded-circle img-fluid"
-              style={{ width: "150px" }}
+              style={{ maxWidth: "150px" , maxHeight:"200px"}}
             />
             <h5 className="my-3">{user.name}</h5>
             <p className="text-muted mb-1">Full Stack Developer</p>
@@ -75,11 +81,11 @@ const UserProfile = ({ user, updateUserProfile }) => {
             <input
               type="file"
               className="form-control"
-              name="profileImg"
-              onChange={handleImageChange}
+              name="profileImage"
+              onChange={handleProfileImage}
             />
             <div className="d-flex justify-content-center mb-2">
-              <button type="button" className="btn btn-primary">
+              <button type="button" onClick={handleProfileImageSubmit} className="btn btn-primary">
                 Update Image
               </button>
             </div>
@@ -105,13 +111,13 @@ const UserProfile = ({ user, updateUserProfile }) => {
               </Col>
               <Col>
                 <div className="form-group">
-                  <label htmlFor="name">User Name</label>
+                  <label htmlFor="name">Your Bio</label>
                   <input
                     type="text"
                     className="form-control"
                     name="username"
-                    placeholder="Enter User Name"
-                    value={formData.username}
+                    placeholder="Enter You bio Status"
+                    value={formData.bio}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -176,13 +182,16 @@ const UserProfile = ({ user, updateUserProfile }) => {
             <Row>
               <Col>
                 <div className="form-group">
-                  <label htmlFor="file">Profile Pic</label>
-                  <input
-                    type="file"
+                  <label htmlFor="file">Your Gender</label>
+                  <select
                     className="form-control"
-                    name="profileImg"
-                    onChange={handleImageChange}
-                  />
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
                 </div>
               </Col>
               <Col>
@@ -208,21 +217,8 @@ const UserProfile = ({ user, updateUserProfile }) => {
           </form>
         </div>
       </div>
-    </div>
+      </div>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.auth.user,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateUserProfile: (profileData) =>
-      dispatch(updateUserProfile(profileData)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);
+export default UserProfile;

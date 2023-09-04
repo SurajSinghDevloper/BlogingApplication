@@ -57,6 +57,8 @@ public class UsrController {
 	public ResponseEntity<String> signup(@RequestBody User newUser) {
 		String hashedPassword = passwordEncoder.encode(newUser.getPassword()); // Hash the password
 		newUser.setPassword(hashedPassword); // Set the hashed password
+		newUser.setName(newUser.getName());
+		newUser.setUsername(newUser.getEmail());
 		userRepository.save(newUser);
 		return ResponseEntity.ok("User registered successfully");
 	}
@@ -81,29 +83,32 @@ public class UsrController {
 	}
 
 	@PostMapping("/updateUser")
-	public ResponseEntity<?> updateUser(@RequestParam("name") String name, @RequestParam("username") String username,
-			@RequestParam("address") String address, @RequestParam("mobile") long mobile,
+	public ResponseEntity<?> updateUser(
+			@RequestParam("name") String name, 
+			@RequestParam("email") String email,
+			@RequestParam("address") String address, 
+			@RequestParam("mobile") long mobile,
+			@RequestParam("gender")String gender,
+			@RequestParam("bio")String bio,
 			@RequestParam("securityQuestion") String securityQuestion,
-			@RequestParam("securityAnswer") String securityAnswer, @RequestParam("imageFile") MultipartFile imageFile,
+			@RequestParam("securityAnswer") String securityAnswer,
 			@RequestHeader("Authorization") String authorizationHeader) throws IOException {
 		ResponseEntity<?> authResponse = authService.authenticateAndRetrieveUser(authorizationHeader);
-
 		if (authResponse.getStatusCode().is2xxSuccessful()) {
-
-			User existingUser = userService.getUserByEmail(username);
-
+			User existingUser = userService.getUserByEmail(email);
 			if (existingUser == null) {
 				return ResponseEntity.notFound().build();
 			}
-
 			existingUser.setName(name);
-			existingUser.setusername(username);
+			existingUser.setEmail(email);
 			existingUser.setAddress(address);
+			existingUser.setGender(gender);
+			existingUser.setBio(bio);
 			existingUser.setMobile(mobile);
 			existingUser.setSecurityQuestion(securityQuestion);
 			existingUser.setSecurityAnswer(securityAnswer);
 
-			User updatedUser = userService.createUser(existingUser, imageFile);
+			User updatedUser = userService.createUser(existingUser);
 			if (updatedUser != null) {
 				return ResponseEntity.ok("Profile updated successfully");
 			} else {
@@ -148,7 +153,7 @@ public class UsrController {
 	public ResponseEntity<String> updateImage(@RequestParam("email") String email,
 			@RequestHeader("Authorization") String authorizationHeader,
 			@RequestParam("imageFile") MultipartFile imageFile) throws IOException {
-
+		System.out.println(email);
 		// Authenticate and retrieve user using the authService
 		ResponseEntity<?> authResponse = authService.authenticateAndRetrieveUser(authorizationHeader);
 

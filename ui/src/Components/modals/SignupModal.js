@@ -6,24 +6,24 @@ import { signup } from "../../Actions/UserAction";
 
 
 const SignupModal = ({ isOpen, onClose }) => {
-  const [fullName, setFullName] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
 
   const handleSaveChanges = async() => {
-    console.log("Full Name:", fullName);
+    console.log("Full Name:", name);
     console.log("Email:", email);
     console.log("Mobile:", mobile);
     console.log("Password:", password);
-    const user ={fullName,
+    const user ={name,
       email,
       mobile,
       password,};
       
       try {
-        if(fullName !== ""||email !== "" || mobile !==""|| password !==""){
+        if(name !== ""||email !== "" || mobile !==""|| password !==""){
           const response = dispatch(signup(user));
           console.log("Response:", response.data);
         }else{
@@ -54,8 +54,8 @@ const SignupModal = ({ isOpen, onClose }) => {
               type="text"
               className="form-control"
               id="name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               aria-describedby="name"
             />
             <label htmlFor="exampleInputEmail1" className="form-label">

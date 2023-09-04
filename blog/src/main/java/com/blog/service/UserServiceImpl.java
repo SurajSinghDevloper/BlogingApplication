@@ -22,34 +22,7 @@ public class UserServiceImpl implements UserService {
     UsersRepository usersRepository;
 
     @Value("${user.image.upload.path}")
-    private String imageUploadPath;
-
-    @Override
-    public User createUser(User user, MultipartFile imageFile) {
-        try {
-            // Generate a unique image name (you can use any logic for generating the name)
-            String imageName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
-
-            // Save the image to the server's filesystem
-            byte[] imageBytes = imageFile.getBytes();
-            Path imageFilePath = Paths.get(imageUploadPath + imageName);
-
-            // Ensure the directory for storing images exists before saving
-            Files.createDirectories(imageFilePath.getParent());
-
-            Files.write(imageFilePath, imageBytes);
-
-            // Set the image name in the User entity and save it to the database
-            user.setProfileImg(imageName);
-            return usersRepository.save(user);
-        } catch (IOException e) {
-            // Handle the exception appropriately
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
-    
+    private String imageUploadPath; 
     
     @Override
     public User updateImage(String email, MultipartFile imageFile) {
@@ -132,5 +105,11 @@ public class UserServiceImpl implements UserService {
 	public User getUserByEmail(String username) {
 		User usr = usersRepository.findByEmail(username);
         return usr;
+	}
+
+	@Override
+	public User createUser(User user) {
+		// TODO Auto-generated method stub
+		return usersRepository.save(user);
 	}
 }

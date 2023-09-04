@@ -30,10 +30,33 @@ public class User {
     private String password;
     private String role;
     private long mobile;
+    private String gender;
+    private String bio;
     private String securityQuestion;
     private String securityAnswer;
     private Date date;
 
+    public User() {
+        super();
+    }
+
+    public User(int userId, String name, String username, String address, String profileImg, String password, long mobile,
+            String securityQuestion, String securityAnswer, Date date) {
+        super();
+        this.userId = userId;
+        this.name = name;
+        this.username = username;
+        this.address = address;
+        this.profileImg = profileImg;
+        this.password = password;
+        this.mobile = mobile;
+        this.securityQuestion = securityQuestion;
+        this.securityAnswer = securityAnswer;
+        this.date = date;
+    }
+
+    // Getter and setter for email
+    
     public String getName() {
         return name;
     }
@@ -42,14 +65,6 @@ public class User {
         this.name = name;
     }
 
-    public String getusername() {
-        return username;
-    }
-
-    public void setusername(String username) {
-        this.username = username;
-    }
-    // Getter and setter for email
     public String getEmail() {
         return email;
     }
@@ -114,25 +129,7 @@ public class User {
         this.date = date;
     }
 
-    public User() {
-        super();
-    }
-
-    public User(int userId, String name, String username, String address, String profileImg, String password, long mobile,
-            String securityQuestion, String securityAnswer, Date date) {
-        super();
-        this.userId = userId;
-        this.name = name;
-        this.username = username;
-        this.address = address;
-        this.profileImg = profileImg;
-        this.password = password;
-        this.mobile = mobile;
-        this.securityQuestion = securityQuestion;
-        this.securityAnswer = securityAnswer;
-        this.date = date;
-    }
-
+   
     // Getters and setters for other fields
 
     public int getUserId() {
@@ -150,5 +147,30 @@ public class User {
 	public void setRole(String role) {
 		this.role = role;
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getBio() {
+		return bio;
+	}
+
+	public void setBio(String bio) {
+		this.bio = bio;
+	}
     
+	
 }
