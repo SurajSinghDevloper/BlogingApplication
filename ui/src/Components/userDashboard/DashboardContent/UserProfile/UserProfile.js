@@ -48,8 +48,8 @@ class UserProfile extends React.Component {
     this.setState({ profileImg: event.target.files[0] });
   };
 
-   handleImageChange = e => {
-    this.setState({profileImg:e.target.files[0]});
+  handleImageChange = (e) => {
+    this.setState({ profileImg: e.target.files[0] });
   };
 
   handleSubmit = (event) => {
@@ -57,6 +57,7 @@ class UserProfile extends React.Component {
     // Dispatch action to update user profile
     const {
       name,
+      username,
       email,
       mobile,
       address,
@@ -67,6 +68,7 @@ class UserProfile extends React.Component {
     } = this.state;
     const updatedProfile = {
       name,
+      username,
       email,
       mobile,
       address,
@@ -130,7 +132,7 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="userName"
                       placeholder="Enter User Name"
-                      value={this.state.username }
+                      value={this.state.username}
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -145,7 +147,7 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="email"
                       placeholder="Enter email"
-                      value={this.state.email }
+                      value={this.state.email}
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -158,7 +160,7 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="address"
                       placeholder="Enter Name"
-                      value={this.state.address }
+                      value={this.state.address}
                       onChange={this.handleInputChange}
                     />
                   </div>
@@ -173,26 +175,11 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="mobile"
                       placeholder="Enter Mobile"
-                      value={this.state.mobile }
+                      value={this.state.mobile}
                       onChange={this.handleInputChange}
                     />
                   </div>
                 </Col>
-                <Col>
-                  <div className="form-group">
-                    <label htmlFor="address">Password</label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      name="password"
-                      placeholder="Enter Password"
-                      value={this.state.password}
-                      onChange={this.handleInputChange}
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <Row>
                 <Col>
                   <div className="form-group">
                     <label htmlFor="address">Security Question</label>
@@ -201,10 +188,21 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="securityQuestion"
                       placeholder="Enter Name"
-                      value={
-                        this.state.securityQuestion
-                      }
+                      value={this.state.securityQuestion}
                       onChange={this.handleInputChange}
+                    />
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div className="form-group">
+                    <label htmlFor="file">Profile Pic</label>
+                    <input
+                      type="file"
+                      className="form-control"
+                      name="profileImg"
+                      onChange={this.handleImageChange}
                     />
                   </div>
                 </Col>
@@ -216,22 +214,13 @@ class UserProfile extends React.Component {
                       className="form-control"
                       name="securityAnswer"
                       placeholder="Enter Security Answer"
-                      value={this.state.securityAnswer }
+                      value={this.state.securityAnswer}
                       onChange={this.handleInputChange}
                     />
                   </div>
                 </Col>
               </Row>
 
-              <div className="form-group">
-                <label htmlFor="file">Profile Pic</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  name="profileImg"
-                  onChange={this.handleImageChange}
-                />
-              </div>
               <div className="align-content-xl-center mt-5">
                 <button type="submit" className="btn btn-primary">
                   Update

@@ -13,7 +13,9 @@ export const login = (user) => {
         const { token, user } = res.data;
         const userJson = user;
         localStorage.setItem("user", JSON.stringify(userJson));
-        setCookie("token", JSON.stringify(token), 1);
+
+        setCookie("token", "Bearer " + token, 1);
+
         dispatch({
           type: authConstant.LOGIN_SUCCESS,
           payload: { token, user },

@@ -78,16 +78,19 @@ public class UsrController {
             @RequestParam("username") String username,
             @RequestParam("address") String address,
             @RequestParam("mobile") long mobile,
-            @RequestParam("password") String password,
+            
             @RequestParam("securityQuestion") String securityQuestion,
             @RequestParam("securityAnswer") String securityAnswer,
             @RequestParam("imageFile") MultipartFile imageFile,
             @RequestHeader("Authorization") String authorizationHeader
     ) throws IOException {
-    	 String jwt = "";
-    	    if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-    	        jwt = authorizationHeader.substring(8);
-    	    }
+    	System.out.println(" AUTHORIZATION HEADER =============>>>>>>> "+ authorizationHeader);
+
+    	String jwt = "";
+    	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+    	    jwt = authorizationHeader.substring(7); // Remove "Bearer " prefix
+    	}
+
     	    System.out.println("JWT COMMING ======  "+jwt);
     	    // Validate the token
     	    if (!jwtUtil.validateToken(jwt, userDetailsService.loadUserByUsername(username))) {
@@ -106,15 +109,14 @@ public class UsrController {
             return ResponseEntity.notFound().build();
         }
 
-        if (name.isEmpty() || username.isEmpty() || password.isEmpty()) {
-            return ResponseEntity.badRequest().body("Required fields are missing.");
-        }
+//        if (name.isEmpty() || username.isEmpty() ) {
+//            return ResponseEntity.badRequest().body("Required fields are missing.");
+//        }
 
         existingUser.setName(name);
         existingUser.setusername(username);
         existingUser.setAddress(address);
         existingUser.setMobile(mobile);
-        existingUser.setPassword(passwordEncoder.encode(password)); // You might want to hash the new password here
         existingUser.setSecurityQuestion(securityQuestion);
         existingUser.setSecurityAnswer(securityAnswer);
 

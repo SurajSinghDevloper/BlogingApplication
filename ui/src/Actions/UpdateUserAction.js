@@ -1,4 +1,3 @@
-import RouteTo from "../Hoc/RouteTo";
 import { userConstant } from "../Constants/UserConstant";
 import { getCookie } from "../Configuration/Cookies";
 import axios from "axios";
@@ -6,28 +5,31 @@ import axios from "axios";
 export const updateUserProfile = (profileData) => {
   return async (dispatch, getState) => {
     dispatch({ type: userConstant.UPDATE_PROFILE_REQUEST });
-    // const formData = new FormData();
-    // formData.append("name", profileData.name);
-    // formData.append("username", profileData.username);
-    // formData.append("email", profileData.email);
-    // formData.append("address", profileData.address);
-    // formData.append("mobile", profileData.mobile);
+    const formData = new FormData();
+    formData.append("name", profileData.name);
+    formData.append("username", profileData.username);
+    formData.append("email", profileData.email);
+    formData.append("address", profileData.address);
+    formData.append("mobile", profileData.mobile);
     // formData.append("password", profileData.password);
-    // formData.append("securityQuestion", profileData.securityQuestion);
-    // formData.append("securityAnswer", profileData.securityAnswer);
-    // formData.append("imageFile", profileData.profileImg);
-    const data = profileData;
-    let token = "";
-    token = getCookie("token");
-    console.log("token from update User  =====   ", token, data);
+    formData.append("securityQuestion", profileData.securityQuestion);
+    formData.append("securityAnswer", profileData.securityAnswer);
+    formData.append("imageFile", profileData.profileImg);
+
+    console.log("From Update User username ========  ", profileData.username);
+
+    const tokenN = getCookie("token");
+    console.log("token from update User  =====   ", tokenN);
+
     const Authorization = {
-      Authorization: `Bearer ${token}`,
+      Authorization: getCookie("token"),
     };
+
     try {
       // Assuming you have an API endpoint for updating user profile
       const res = await axios.post(
         "http://localhost:8081/user/updateUser",
-        profileData,
+        formData,
         {
           headers: Authorization,
         }
