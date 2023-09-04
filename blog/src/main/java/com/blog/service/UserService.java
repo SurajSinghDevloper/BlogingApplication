@@ -8,7 +8,9 @@ import com.blog.entity.User;
 
 public interface UserService {
     public User createUser(User user, MultipartFile imageFile);
-
+    
+    public User updateImage(String email, MultipartFile imageFile);
+    
     public List<User> getAllUsers();
 
     public User getUserById(int userId);

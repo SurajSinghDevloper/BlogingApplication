@@ -1,6 +1,6 @@
 import { userConstant } from "../Constants/UserConstant";
 import { getCookie } from "../Configuration/Cookies";
-import axios from "axios";
+import RouteTo from "../Hoc/RouteTo";
 
 export const updateUserProfile = (profileData) => {
   return async (dispatch, getState) => {
@@ -16,8 +16,6 @@ export const updateUserProfile = (profileData) => {
     formData.append("securityAnswer", profileData.securityAnswer);
     formData.append("imageFile", profileData.profileImg);
 
-    console.log("From Update User username ========  ", profileData.username);
-
     const tokenN = getCookie("token");
     console.log("token from update User  =====   ", tokenN);
 
@@ -27,15 +25,54 @@ export const updateUserProfile = (profileData) => {
 
     try {
       // Assuming you have an API endpoint for updating user profile
-      const res = await axios.post(
-        "http://localhost:8081/user/updateUser",
-        formData,
-        {
-          headers: Authorization,
-        }
-      );
+      const res = await RouteTo.post("/user/updateUser", formData, {
+        headers: Authorization,
+      });
 
-      console.log("RESPONE FROM=======    ", res.status);
+      if (res.status === 200) {
+        const updatedUser = res.data.user;
+
+        // Update user data in Redux store
+        dispatch({
+          type: userConstant.UPDATE_PROFILE_SUCCESS,
+          payload: { user: updatedUser },
+        });
+        // Update user data in local storage
+
+        localStorage.setItem("user", JSON.stringify(profileData));
+        console.log(profileData);
+      } else {
+        dispatch({
+          type: userConstant.UPDATE_PROFILE_FAILURE,
+          payload: { error: "Failed to update profile, please try again." },
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      dispatch({
+        type: userConstant.UPDATE_PROFILE_FAILURE,
+        payload: { error: "An error occurred while updating profile." },
+      });
+    }
+  };
+};
+
+export const updateUserProfileImage = (profileImage) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: userConstant.UPDATE_PROFILE_REQUEST });
+    const formData = new FormData();
+    const userData = localStorage.getItem("user");
+    formData.append("email", userData.email);
+    formData.append("imageFile", profileImage.profileImg);
+    const Authorization = {
+      Authorization: getCookie("token"),
+    };
+    try {
+      // Assuming you have an API endpoint for updating user profile
+      const res = await RouteTo.post("/user/updateImage", formData, {
+        headers: Authorization,
+      });
+
       if (res.status === 200) {
         const updatedUser = res.data.user;
 

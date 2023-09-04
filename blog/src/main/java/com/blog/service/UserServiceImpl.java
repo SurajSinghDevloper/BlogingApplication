@@ -48,6 +48,37 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
+    
+    
+    
+    @Override
+    public User updateImage(String email, MultipartFile imageFile) {
+        try {
+            // Generate a unique image name (you can use any logic for generating the name)
+            String imageName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
+
+            // Save the image to the server's filesystem
+            byte[] imageBytes = imageFile.getBytes();
+            Path imageFilePath = Paths.get(imageUploadPath + imageName);
+
+            // Ensure the directory for storing images exists before saving
+            Files.createDirectories(imageFilePath.getParent());
+
+            Files.write(imageFilePath, imageBytes);
+            User user = usersRepository.findByEmail(email);
+            // Set the image name in the User entity and save it to the database
+            user.setProfileImg(imageName);
+            return usersRepository.save(user);
+        } catch (IOException e) {
+            // Handle the exception appropriately
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    
+    
+    
 
     public List<User> getAllUsers() {
         return usersRepository.findAll();
