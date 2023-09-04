@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 
 import java.io.IOException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -55,16 +56,24 @@ public class UsrController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody User newUser) {
+<<<<<<< HEAD
 		String hashedPassword = passwordEncoder.encode(newUser.getPassword()); // Hash the password
 		newUser.setPassword(hashedPassword); // Set the hashed password
 		newUser.setName(newUser.getName());
 		newUser.setUsername(newUser.getEmail());
 		userRepository.save(newUser);
 		return ResponseEntity.ok("User registered successfully");
+=======
+	    String hashedPassword = passwordEncoder.encode(newUser.getUserPassword()); // Hash the password
+	    newUser.setUserPassword(hashedPassword); // Set the hashed password
+	    userRepository.save(newUser);
+	    return ResponseEntity.ok("User registered successfully");
+>>>>>>> 9fcf5b31389e84d8660eecb7632d6bce75f76a99
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody User loginUser) {
+<<<<<<< HEAD
 		try {
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword()));
@@ -135,6 +144,71 @@ public class UsrController {
 				// Set appropriate headers for the image response
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.IMAGE_JPEG); // Adjust MediaType as needed
+=======
+	    try {
+	        Authentication authentication = authenticationManager.authenticate(
+	            new UsernamePasswordAuthenticationToken(
+	                loginUser.getEmail(),
+	                loginUser.getUserPassword()
+	            )
+	        );
+	        
+	        User user = userRepository.findByEmail(loginUser.getEmail());
+	        UserDetails userDetails = userDetailsService.loadUserByUsername(loginUser.getEmail());
+	        String token = jwtUtil.generateToken(userDetails);
+	        
+	        // Create a response object with token and user details
+	        LoginResponse loginResponse = new LoginResponse(token, user);
+	        
+	        return ResponseEntity.ok(loginResponse);
+	    } catch (AuthenticationException e) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+	    }
+	}
+
+    
+	@PutMapping("/updateUser")
+	public ResponseEntity<String> updateUser(
+	        @RequestParam("name") String name,
+	        @RequestParam("email") String email,
+	        @RequestParam("username") String username,
+	        @RequestParam("address") String address,
+	        @RequestParam("mobile") long mobile,
+	        @RequestParam("password") String password,
+	        @RequestParam("securityQuestion") String securityQuestion,
+	        @RequestParam("securityAnswer") String securityAnswer,
+	        @RequestParam("imageFile") MultipartFile imageFile,
+	        @AuthenticationPrincipal UserDetails userDetails
+	) throws IOException {
+	    
+	    String authenticatedUsername = userDetails.getUsername();
+	    System.out.println("authenticatedUsername ==========  " + authenticatedUsername);
+	    
+	    if (!authenticatedUsername.equals(username)) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+	    }
+
+	    User existingUser = userService.getUserByEmail(authenticatedUsername);
+
+	    if (existingUser == null) {
+	        return ResponseEntity.notFound().build();
+	    }
+
+	    if (name.isEmpty() || username.isEmpty()) {
+	        return ResponseEntity.badRequest().body("Name and username are required.");
+	    }
+
+	    // Only update password if it's provided, to avoid unintentionally changing it
+	    if (!password.isEmpty()) {
+	        existingUser.setUserPassword(passwordEncoder.encode(password));
+	    }
+
+        existingUser.setName(name);
+        existingUser.setEmail(email);
+        existingUser.setUserName(username);
+        existingUser.setUserPassword(passwordEncoder.encode(password)); // You might want to hash the new password here
+
+>>>>>>> 9fcf5b31389e84d8660eecb7632d6bce75f76a99
 
 				// Return the image as a ResponseEntity
 				return ResponseEntity.ok().headers(headers).body(resource);

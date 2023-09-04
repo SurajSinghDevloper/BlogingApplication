@@ -13,7 +13,6 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-  console.log("🚀 ~ file: auth.reducer.js:8 ~ reducer ~ action:", action);
   switch (action.type) {
     case authConstant.LOGIN_REQUEST:
       return {
@@ -31,7 +30,6 @@ const reducer = (state = initialState, action) => {
     case authConstant.LOGOUT_REQUEST:
       return initialState;
     default:
-      console.log("from AuthReducer ", state);
       return state;
   }
 };

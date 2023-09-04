@@ -39,8 +39,6 @@ export const login = (user) => {
 export const isUserLoggedIn = () => {
   return (dispatch) => {
     const token = getCookie("token"); // Use the correct cookie name
-    console.log("TOKEN FROM isUserLoggedIn --------->>>>>", token);
-
     const userJSON = localStorage.getItem("user");
 
     if (token && userJSON) {
