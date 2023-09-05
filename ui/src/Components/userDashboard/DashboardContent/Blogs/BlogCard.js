@@ -5,25 +5,25 @@ const BlogCard = () => {
   return (
     <div>
       <div>
-        <div class="col">
-          <div class="col-md-9">
-            <div class="blog-card">
+        <div className="col">
+          <div className="col-md-9">
+            <div className="blog-card">
               <img
                 src="https://via.placeholder.com/400x250"
                 alt="Image"
-                class="blog-img"
+                className="blog-img"
               />
-              <h2 class="blog-title">Blog Title</h2>
-              <p class="blog-content">
+              <h2 className="blog-title">Blog Title</h2>
+              <p className="blog-content">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
                 vehicula, urna quis mattis vulputate.
               </p>
-              <button class="btn btn-primary btn-like">Like</button>
-              <button class="btn btn-secondary btn-dislike">Dislike</button>
-              <div class="comment-section">
+              <button className="btn btn-primary btn-like">Like</button>
+              <button className="btn btn-secondary btn-dislike">Dislike</button>
+              <div className="comment-section">
                 <h4>Comments</h4>
-                <div class="comment">Comment 1</div>
-                <div class="comment">Comment 2</div>
+                <div className="comment">Comment 1</div>
+                <div className="comment">Comment 2</div>
               </div>
             </div>
           </div>

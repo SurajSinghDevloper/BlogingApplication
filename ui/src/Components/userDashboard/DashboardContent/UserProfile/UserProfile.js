@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateUserProfile } from "../../../../Actions/UpdateUserAction"; // Import both actions from the correct file
 import "./UserProfile.css";
-import { Col, Row } from "react-bootstrap";
 import { updateUserProfileImage } from "../../../../Actions/UpdateProfileImgAction";
+import { Col, Row } from "react-bootstrap";
 
 const UserProfile = () => {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const [profileImage, setProfileImage] = useState(null);
+  const imageUrl = `${process.env.REACT_APP_BASE_URL}/user/images/${user.profileImg}`;
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(imageUrl);
   const [formData, setFormData] = useState({
     name: "",
     bio: "",
@@ -25,7 +27,7 @@ const UserProfile = () => {
     if (user) {
       setFormData({
         name: user.name || "",
-        username: user.bio || "",
+        bio: user.bio || "",
         email: user.email || "",
         mobile: user.mobile || "",
         address: user.address || "",
@@ -42,50 +44,52 @@ const UserProfile = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-
   const handleProfileImageSubmit = (e) => {
     e.preventDefault();
-    // Update the profile image using the provided action
-    dispatch(updateUserProfileImage(profileImage, user.email));
-  };
-  
-  const handleProfileImage = (e) => {
-    setProfileImage(e.target.files[0]);
-  };
-  
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Dispatch action to update user profile
-    dispatch(updateUserProfile(formData));
+    if (profileImage) {
+      const newImageUrl = URL.createObjectURL(profileImage);
+      setImagePreviewUrl(newImageUrl);
+      dispatch(updateUserProfileImage(profileImage, user.email, newImageUrl));
+      setProfileImage(null);
+    }
   };
 
+  const handleProfileImageChange = (e) => {
+    setProfileImage(e.target.files[0]);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    dispatch(updateUserProfile(formData));
+  };
   return (
     <div className="centered-div-container">
       <div className="centered-div">
         <div className="card mb-4">
           <div className="card-body text-center">
             <img
-              src={
-                process.env.REACT_APP_BASE_URL +
-                "user/images/" +
-                user.profileImg
-              }
+              src={imagePreviewUrl}
               alt="avatar"
               className="rounded-circle img-fluid"
-              style={{ maxWidth: "150px" , maxHeight:"200px"}}
+              style={{ maxWidth: "150px", maxHeight: "200px" }}
             />
             <h5 className="my-3">{user.name}</h5>
-            <p className="text-muted mb-1">Full Stack Developer</p>
+            <p className="text-muted mb-1">{user.bio}</p>
             <p className="text-muted mb-4">{user.address}</p>
 
             <input
               type="file"
               className="form-control"
               name="profileImage"
-              onChange={handleProfileImage}
+              onChange={handleProfileImageChange}
             />
             <div className="d-flex justify-content-center mb-2">
-              <button type="button" onClick={handleProfileImageSubmit} className="btn btn-primary">
+              <button
+                type="button"
+                onClick={handleProfileImageSubmit}
+                className="btn btn-primary"
+                disabled={!profileImage}
+              >
                 Update Image
               </button>
             </div>
@@ -115,7 +119,7 @@ const UserProfile = () => {
                   <input
                     type="text"
                     className="form-control"
-                    name="username"
+                    name="bio"
                     placeholder="Enter You bio Status"
                     value={formData.bio}
                     onChange={handleInputChange}
@@ -217,7 +221,7 @@ const UserProfile = () => {
           </form>
         </div>
       </div>
-      </div>
+    </div>
   );
 };
 

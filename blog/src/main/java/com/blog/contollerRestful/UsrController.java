@@ -150,7 +150,7 @@ public class UsrController {
 	}
 
 	@PostMapping("/updateImage")
-	public ResponseEntity<String> updateImage(@RequestParam("email") String email,
+	public ResponseEntity<?> updateImage(@RequestParam("email") String email,
 			@RequestHeader("Authorization") String authorizationHeader,
 			@RequestParam("imageFile") MultipartFile imageFile) throws IOException {
 		System.out.println(email);
@@ -161,7 +161,8 @@ public class UsrController {
 			// Authentication successful, continue with image update
 			User updatedUser = userService.updateImage(email, imageFile);
 			if (updatedUser != null) {
-				return ResponseEntity.ok("Profile image updated successfully");
+				User user = userService.getUserByEmail(email);
+				return ResponseEntity.status(200).body(user);
 			} else {
 				return ResponseEntity.badRequest().body("Failed to update profile image");
 			}

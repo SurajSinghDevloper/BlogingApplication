@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { signup } from "../../Actions/UserAction";
-
 
 const SignupModal = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
@@ -12,31 +10,27 @@ const SignupModal = ({ isOpen, onClose }) => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
 
-  const handleSaveChanges = async() => {
+  const handleSaveChanges = async () => {
     console.log("Full Name:", name);
     console.log("Email:", email);
     console.log("Mobile:", mobile);
     console.log("Password:", password);
-    const user ={name,
-      email,
-      mobile,
-      password,};
-      
-      try {
-        if(name !== ""||email !== "" || mobile !==""|| password !==""){
-          const response = dispatch(signup(user));
-          console.log("Response:", response.data);
-        }else{
-          Alert("All Fields Are Important")
-        }
-        onClose();
-        user.clear();
-      } catch (error) {
-        console.error("Error:", error);
+    const user = { name, email, mobile, password };
+
+    try {
+      if (name !== "" || email !== "" || mobile !== "" || password !== "") {
+        const response = dispatch(signup(user));
+        console.log("Response:", response.data);
+      } else {
+        Alert("All Fields Are Important");
       }
+      onClose();
+      user.clear();
+    } catch (error) {
+      console.error("Error:", error);
+    }
     // Close the modal after handling the data
     onClose();
-    
   };
 
   return (
@@ -100,7 +94,7 @@ const SignupModal = ({ isOpen, onClose }) => {
           Close
         </Button>
         <Button variant="primary" onClick={handleSaveChanges}>
-          Register 
+          Register
         </Button>
       </Modal.Footer>
     </Modal>
