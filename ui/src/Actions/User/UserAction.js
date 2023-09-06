@@ -1,5 +1,5 @@
-import RouteTo from "../Hoc/RouteTo";
-import { userConstant } from "../Constants/UserConstant";
+import RouteTo from "../../Hoc/RouteTo";
+import { userConstant } from "../../Constants/UserConstant";
 
 export const signup = (user) => {
   console.log("👉👉 ~~ file: auth.action.js:6 ~~ login ~~ user:", user);

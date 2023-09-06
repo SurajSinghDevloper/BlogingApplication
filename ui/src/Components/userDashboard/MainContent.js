@@ -3,8 +3,9 @@ import Lobby from "./DashboardContent/Lobby";
 import UserProfile from "./DashboardContent/UserProfile/UserProfile";
 import Messages from "./DashboardContent/Messages/Messages";
 import { useDispatch } from "react-redux";
-import { signout } from "../../Actions/AuthAction";
+import { signout } from "../../Actions/User/AuthAction";
 import { useHistory } from "react-router-dom";
+import CreateBlog from "./DashboardContent/Blogs/CreateBlog";
 
 const MainContent = ({ activePage }) => {
   const dispatch = useDispatch();
@@ -21,6 +22,8 @@ const MainContent = ({ activePage }) => {
         return <UserProfile />;
       case "message":
         return <Messages />;
+      case "createBlog":
+        return <CreateBlog />;
       case "setting":
         return <h1>Settings Page</h1>;
       default:

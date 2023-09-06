@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../Actions/AuthAction";
+import { login } from "../../Actions/User/AuthAction";
 import { Redirect } from "react-router-dom/cjs/react-router-dom";
 
 const LoginModal = ({ isOpen, onClose }) => {

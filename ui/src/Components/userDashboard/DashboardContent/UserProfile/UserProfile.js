@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateUserProfile } from "../../../../Actions/UpdateUserAction"; // Import both actions from the correct file
+import { updateUserProfile } from "../../../../Actions/User/UpdateUserAction"; // Import both actions from the correct file
 import "./UserProfile.css";
-import { updateUserProfileImage } from "../../../../Actions/UpdateProfileImgAction";
+import { updateUserProfileImage } from "../../../../Actions/User/UpdateProfileImgAction";
 import { Col, Row } from "react-bootstrap";
 
 const UserProfile = () => {

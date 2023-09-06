@@ -10,8 +10,8 @@ const BlogCard = () => {
             <div className="blog-card">
               <img
                 src="https://via.placeholder.com/400x250"
-                alt="Image"
-                className="blog-img"
+                alt="card"
+                className="blog-pic"
               />
               <h2 className="blog-title">Blog Title</h2>
               <p className="blog-content">

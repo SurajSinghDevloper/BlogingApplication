@@ -1,6 +1,9 @@
 package com.blog.contollerRestful;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,87 +17,82 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.blog.configuration.AuthenticationProcess;
 import com.blog.entity.Blog;
+import com.blog.entity.BlogImg;
 import com.blog.repository.BlogRepository;
 import com.blog.service.BlogService;
 
+
+
 @RestController
-@RequestMapping("/api/blog")
+@RequestMapping("/user/blog")
 public class BlogController {
     @Autowired
     BlogRepository blogRepository;
 
+	@Autowired
+	private AuthenticationProcess authService;
+    
+    
     @Value("${blog.image.upload.path}")
     private String imageUploadPath;
+    @Autowired
     private final BlogService blogService;
 
     public BlogController(BlogService blogService) {
         this.blogService = blogService;
     }
+    
+    @PostMapping("/createBlog")
+    public ResponseEntity<?> createBlogWithImages(
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("likes") int likes,
+            @RequestParam("userId") int userId,
+            @RequestParam("email") String email,
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam(value = "files", required = true) List<MultipartFile> files) {
 
-    @PostMapping("/create") // Change the mapping as per your requirement
-    public ResponseEntity<?> createBlog(@ModelAttribute Blog blog,
-            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile) throws IOException {
-        if (blog.getTitle().isEmpty() || imageFile == null || imageFile.isEmpty() || blog.getUserId() == 0) {
-            return ResponseEntity.badRequest().body("Required fields are missing.");
+        ResponseEntity<?> authResponse = authService.authenticateAndRetrieveUser(authorizationHeader);
+
+        if (!authResponse.getStatusCode().is2xxSuccessful()) {
+            // Authentication failed, return the same response
+            return ResponseEntity.status(authResponse.getStatusCode()).body(authResponse.getBody().toString());
         }
 
-        Blog createdBlog = blogService.createBlog(blog, imageFile);
-        return new ResponseEntity<>(createdBlog, HttpStatus.CREATED);
-    }
+        try {
+            // Create a new Blog entity
+            Blog blog = new Blog();
+            blog.setTitle(title);
+            blog.setContent(content);
+            blog.setLikes(likes);
+            blog.setDate(LocalDate.now());
+            blog.setTime(LocalTime.now());
+            blog.setUserId(userId);
 
-    @GetMapping
-    public ResponseEntity<List<Blog>> getAllBlogs() {
-        List<Blog> blogs = blogService.getAllBlogs();
-        return new ResponseEntity<>(blogs, HttpStatus.OK);
-    }
-
-    @GetMapping("/{blogId}")
-    public ResponseEntity<Blog> getBlogById(@PathVariable int blogId) {
-        Blog blog = blogService.getBlogById(blogId);
-        if (blog != null) {
-            return new ResponseEntity<>(blog, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @PutMapping("/{blogId}")
-    public ResponseEntity<Blog> updateBlog(@PathVariable int blogId, @RequestBody Blog blog) {
-        Blog existingBlog = blogService.getBlogById(blogId);
-        if (existingBlog != null) {
-            blog.setBlogId(blogId);
-            Blog updatedBlog = blogService.updateBlog(blog);
-            return new ResponseEntity<>(updatedBlog, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @DeleteMapping("/{blogId}")
-    public ResponseEntity<Void> deleteBlog(@PathVariable int blogId) {
-        Blog existingBlog = blogService.getBlogById(blogId);
-        if (existingBlog != null) {
-            blogService.deleteBlog(blogId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // Create BlogImage entities for each uploaded file
+            List<BlogImg > blogImages = new ArrayList<>();
+            if (files != null && !files.isEmpty()) {
+                for (MultipartFile file : files) {
+                	BlogImg blogImage = new BlogImg();
+                    blogImage.setImageName(file.getOriginalFilename());
+                    blogImage.setBlog(blog); // Associate the image with the blog
+                    blogImages.add(blogImage);
+                }
+            }
+            // Save the Blog with the associated BlogImage entities
+            blog = blogService.saveBlogWithImages(blog, blogImages);
+            return new ResponseEntity<>(blog, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating blog: " + e.getMessage());
         }
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Blog>> getAllBlogsByUserId(@PathVariable int userId) {
-        List<Blog> blogs = blogService.getAllBlogsByUserId(userId);
-        return new ResponseEntity<>(blogs, HttpStatus.OK);
-    }
-
-    @GetMapping("/user/{userId}/sorted")
-    public ResponseEntity<List<Blog>> getBlogsByUserId(@PathVariable int userId) {
-        List<Blog> blogs = blogService.getBlogsByUserId(userId);
-        return new ResponseEntity<>(blogs, HttpStatus.OK);
-    }
 }

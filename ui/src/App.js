@@ -5,7 +5,7 @@ import Home from "./Components/Home";
 import "./App.css";
 import Dashboard from "./Components/userDashboard/Dashboard";
 import { useDispatch, useSelector } from "react-redux";
-import { isUserLoggedIn } from "./Actions/AuthAction";
+import { isUserLoggedIn } from "./Actions/User/AuthAction";
 import PrivateRoute from "./Hoc/PrivateRoute";
 
 const App = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { signup } from "../../Actions/UserAction";
+import { signup } from "../../Actions/User/UserAction";
 
 const SignupModal = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");

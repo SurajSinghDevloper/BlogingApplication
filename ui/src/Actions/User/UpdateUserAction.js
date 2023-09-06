@@ -1,6 +1,6 @@
-import { userConstant } from "../Constants/UserConstant";
-import { getCookie } from "../Configuration/Cookies";
-import RouteTo from "../Hoc/RouteTo";
+import { userConstant } from "../../Constants/UserConstant";
+import { getCookie } from "../../Configuration/Cookies";
+import RouteTo from "../../Hoc/RouteTo";
 
 export const updateUserProfile = (profileData) => {
   return async (dispatch, getState) => {

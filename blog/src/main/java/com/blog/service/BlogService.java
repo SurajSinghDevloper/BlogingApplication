@@ -5,19 +5,10 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.blog.entity.Blog;
+import com.blog.entity.BlogImg;
 
 public interface BlogService {
-    public Blog createBlog(Blog blog, MultipartFile imageFile);
+	 public Blog saveBlogWithImages(Blog blog, List<BlogImg> blogImages);
 
-    public List<Blog> getAllBlogs();
-
-    public Blog getBlogById(int blogId);
-
-    public Blog updateBlog(Blog blog);
-
-    public void deleteBlog(int blogId);
-
-    public List<Blog> getAllBlogsByUserId(int userId);
-
-    public List<Blog> getBlogsByUserId(int userId);
+   
 }

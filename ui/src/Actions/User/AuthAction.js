@@ -1,6 +1,6 @@
-import RouteTo from "../Hoc/RouteTo";
-import { authConstant } from "../Constants/AuthConstant";
-import { clearCookie, getCookie, setCookie } from "../Configuration/Cookies";
+import RouteTo from "../../Hoc/RouteTo";
+import { authConstant } from "../../Constants/AuthConstant";
+import { clearCookie, getCookie, setCookie } from "../../Configuration/Cookies";
 
 export const login = (user) => {
   return async (dispatch) => {
