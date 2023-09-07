@@ -1,46 +1,62 @@
 package com.blog.utils;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
-@Service
+@Component
 public class FileUtil {
+	 @Value("${blog.image.upload.path}") // Specify the directory where images should be saved in your application.properties or application.yml file.
+	    private String imageUploadPath;
+	 
+//	    public void saveImage(String imageName, byte[] imageBytes) throws IOException {
+//	        String imagePath = imageUploadPath + imageName;
+//
+//	        try (FileOutputStream fos = new FileOutputStream(imagePath)) {
+//	            fos.write(imageBytes);
+//	        } catch (IOException e) {
+//	            // Handle the exception appropriately
+//	            e.printStackTrace();
+//	            throw e;
+//	        }
+//	    }
+	 
+	 public void saveImage(String imageName, byte[] imageBytes) throws IOException {
+		    String imagePath = imageUploadPath + imageName;
 
-	private List<String> saveImagesToFolder(List<MultipartFile> images) {
-	    // Define the folder where you want to save the images
-	    String uploadDir = "your_upload_directory_here";
+		    File imageDirectory = new File(imageUploadPath);
 
-	    // Create a list to store image file names
-	    List<String> imageFileNames = new ArrayList<>();
-
-	    // Iterate through the images and save them with UUID-based file names
-	    for (MultipartFile image : images) {
-	        // Generate a unique file name using UUID
-	        String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
-
-	        // Save the image file name to the list
-	        imageFileNames.add(fileName);
-
-	        // Save the image file to the folder
-	        try {
-	            Path filePath = Paths.get(uploadDir, fileName);
-	            Files.write(filePath, image.getBytes());
-	        } catch (IOException e) {
-	            // Handle exceptions
-	            e.printStackTrace();
-	        }
-	    }
-
-	    return imageFileNames;
-	}
+		    if (!imageDirectory.exists()) {
+		        if (imageDirectory.mkdirs()) {
+		            // Directory created successfully, proceed to save the image
+		            try (FileOutputStream fos = new FileOutputStream(imagePath)) {
+		                fos.write(imageBytes);
+		                // Log success
+		                System.out.println("Image saved to: " + imagePath);
+		            } catch (IOException e) {
+		                // Handle the exception appropriately
+		                e.printStackTrace();
+		                throw e;
+		            }
+		        } else {
+		            // Handle directory creation failure
+		            throw new IOException("Failed to create image directory.");
+		        }
+		    } else {
+		        // Directory already exists, proceed to save the image
+		        try (FileOutputStream fos = new FileOutputStream(imagePath)) {
+		            fos.write(imageBytes);
+		            // Log success
+		            System.out.println("Image saved to: " + imagePath);
+		        } catch (IOException e) {
+		            // Handle the exception appropriately
+		            e.printStackTrace();
+		            throw e;
+		        }
+		    }
+		}
 
 }

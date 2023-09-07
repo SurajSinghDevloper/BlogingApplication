@@ -33,4 +33,27 @@ function clearCookie(name) {
   document.cookie = name + "=" + cookieValue + "; path=/";
 }
 
-export { setCookie, getCookie, clearCookie };
+// Function to set a user cookie
+function setUserCookie(name, userObject, days) {
+  const expirationDate = new Date();
+  expirationDate.setDate(expirationDate.getDate() + days);
+  const userValue =
+    encodeURIComponent(JSON.stringify(userObject)) +
+    (days ? "; expires=" + expirationDate.toUTCString() : "");
+  document.cookie = name + "=" + userValue + "; path=/";
+}
+
+// Function to get the user object from the cookie
+function getUserFromCookie(name) {
+  const userValue = getCookie(name);
+  if (userValue) {
+    try {
+      return JSON.parse(decodeURIComponent(userValue));
+    } catch (error) {
+      console.error("Error parsing user cookie:", error);
+    }
+  }
+  return null;
+}
+
+export { setCookie, getCookie, clearCookie, getUserFromCookie, setUserCookie };

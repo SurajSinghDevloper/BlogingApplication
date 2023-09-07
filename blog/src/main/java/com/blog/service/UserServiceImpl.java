@@ -24,6 +24,8 @@ public class UserServiceImpl implements UserService {
     @Value("${user.image.upload.path}")
     private String imageUploadPath; 
     
+ 
+    
     @Override
     public User updateImage(String email, MultipartFile imageFile) {
         try {

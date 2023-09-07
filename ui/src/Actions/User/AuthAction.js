@@ -1,6 +1,11 @@
 import RouteTo from "../../Hoc/RouteTo";
 import { authConstant } from "../../Constants/AuthConstant";
-import { clearCookie, getCookie, setCookie } from "../../Configuration/Cookies";
+import {
+  clearCookie,
+  getCookie,
+  setCookie,
+  setUserCookie,
+} from "../../Configuration/Cookies";
 
 export const login = (user) => {
   return async (dispatch) => {
@@ -15,7 +20,7 @@ export const login = (user) => {
         localStorage.setItem("user", JSON.stringify(userJson));
 
         setCookie("token", "Bearer " + token, 1);
-
+        setUserCookie("user", user, 1);
         dispatch({
           type: authConstant.LOGIN_SUCCESS,
           payload: { token, user },
