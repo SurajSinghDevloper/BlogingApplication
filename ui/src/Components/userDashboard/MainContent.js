@@ -1,13 +1,14 @@
 import React from "react";
-import Lobby from "./DashboardContent/Lobby";
+import Lobby from "./DashboardContent/Lobby/Lobby";
 import UserProfile from "./DashboardContent/UserProfile/UserProfile";
 import Messages from "./DashboardContent/Messages/Messages";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signout } from "../../Actions/User/AuthAction";
 import { useHistory } from "react-router-dom";
 import CreateBlog from "./DashboardContent/Blogs/CreateBlog";
 
 const MainContent = ({ activePage }) => {
+  const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const history = useHistory();
   const handleLogout = () => {
@@ -42,7 +43,7 @@ const MainContent = ({ activePage }) => {
         >
           Logout
         </a>
-        <h3>User Singh</h3>
+        <h3 style={{ fontFamily: "Raleway" }}>{user.name}</h3>
       </header>
       <div
         className="input-group"

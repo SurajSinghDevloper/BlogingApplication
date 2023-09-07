@@ -51,7 +51,7 @@ public class BlogController {
             	blog.setUser_id(user.getUserId());
             	blog.setUserName(email);
                 Blog createdBlog = blogService.createBlogWithImages(blog, imageFiles);
-                return ResponseEntity.ok(createdBlog);
+                return ResponseEntity.status(200).body(createdBlog);
             } else {
                 // Authentication failed, return the same response
                 return ResponseEntity.status(authResponse.getStatusCode()).body(authResponse.getBody().toString());
