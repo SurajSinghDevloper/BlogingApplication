@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signout } from "../../Actions/User/AuthAction";
 import { useHistory } from "react-router-dom";
 import CreateBlog from "./DashboardContent/Blogs/CreateBlog";
+import ViewBlogs from "./DashboardContent/Blogs/ViewBlogs";
 
 const MainContent = ({ activePage }) => {
   const user = useSelector((state) => state.auth.user);
@@ -25,6 +26,8 @@ const MainContent = ({ activePage }) => {
         return <Messages />;
       case "createBlog":
         return <CreateBlog />;
+      case "viewBlogs":
+        return <ViewBlogs />;
       case "setting":
         return <h1>Settings Page</h1>;
       default:

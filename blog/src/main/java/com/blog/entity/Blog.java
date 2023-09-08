@@ -25,8 +25,9 @@ public class Blog {
 	private int likes;
 	private LocalTime time;
 	private LocalDate date;
-	private int user_id;
-	private String userName;
+	private int UserId;
+	@Column(name = "username")
+	private String username;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -68,16 +69,16 @@ public class Blog {
 		this.date = date;
 	}
 	public int getUser_id() {
-		return user_id;
+		return UserId;
 	}
-	public void setUser_id(int user_id) {
-		this.user_id = user_id;
+	public void setUser_id(int UserId) {
+		this.UserId = UserId;
 	}
 	public String getUserName() {
-		return userName;
+		return username;
 	}
 	public void setUserName(String userName) {
-		this.userName = userName;
+		this.username = userName;
 	}
 	public List<BlogImages> getImages() {
 		return images;
