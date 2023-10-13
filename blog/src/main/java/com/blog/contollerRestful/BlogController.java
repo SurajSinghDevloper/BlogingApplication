@@ -4,6 +4,7 @@ package com.blog.contollerRestful;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,6 +61,23 @@ public class BlogController {
             // Handle exceptions
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating blog.");
+        }
+    }
+	
+
+	@GetMapping("/getBlog/{email}")
+    public ResponseEntity<?> getAllBlogsOfUserName(@PathVariable String email, @RequestHeader("Authorization") String authorizationHeader) {
+		System.out.println("EMAIL =====>  "+email);
+        ResponseEntity<?> authResponse = authService.authenticateAndRetrieveUser(authorizationHeader);
+        if (authResponse.getStatusCode().is2xxSuccessful()) {
+            Map<String, Object> result = blogService.getAllBlogOfUserName(email);
+            if(result != null) {
+            return ResponseEntity.ok(result);
+            }else {
+            	return ResponseEntity.status(0300).body("Something Went Wrong");
+            }
+        } else {
+            return ResponseEntity.status(authResponse.getStatusCode()).body(authResponse.getBody().toString());
         }
     }
 

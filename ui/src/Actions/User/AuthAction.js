@@ -28,7 +28,7 @@ export const login = (user) => {
       } else {
         dispatch({
           type: authConstant.LOGIN_FAILURE,
-          payload: { error: "Failed to log in, please try again." },
+          payload: { error: "Failed to log in Server, please try again." },
         });
       }
     } catch (error) {

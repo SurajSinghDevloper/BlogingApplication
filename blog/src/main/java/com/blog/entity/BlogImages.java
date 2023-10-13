@@ -13,6 +13,8 @@ public class BlogImages {
     @ManyToOne
     @JoinColumn(name = "blog_id")
     private Blog blog;
+    
+
 
 	public Long getId() {
 		return id;
@@ -38,6 +40,9 @@ public class BlogImages {
 		this.blog = blog;
 	}
 
+
+	
+	
     // Constructors, getters, setters, and other methods
     
 }

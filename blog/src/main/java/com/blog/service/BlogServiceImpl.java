@@ -60,7 +60,7 @@ public class BlogServiceImpl implements BlogService{
 	                // Create a BlogImage entity
 	                BlogImages blogImage = new BlogImages();
 	                blogImage.setImageName(imageName);
-	                blogImage.setBlog(savedBlog); // Set the blog for the image
+	                blogImage.setBlog(savedBlog); // Set the blogId for the image
 
 	                // Add the BlogImage to the list
 	                blogImages.add(blogImage);
@@ -82,19 +82,38 @@ public class BlogServiceImpl implements BlogService{
 	        }
 	    }
 
-
+//
+//		@Override
+//		public Map<String, Object> getAllBlogOfUserName(String username) {
+//			 User user = userRepo.findByEmail(username);
+//		        List<Blog> blog = blogRepository.findBlogsByUsername(username);
+//		        List<BlogImages> blogImage = blogImageRepo.findBlogImagesByBlogs(blog);
+//		        Map<String, Object> result = new HashMap<>();
+//		        result.put("blog", blog);
+//		        result.put("blogImage", blogImage);
+//		        System.out.println("this result 👌👌👌👌👌👌 ===>  "+result);
+//		        return result;
+//		}
+		
+		
 		@Override
 		public Map<String, Object> getAllBlogOfUserName(String username) {
-			 User user = userRepo.findByEmail(username);
-		        Blog blog = blogRepository.findBlogByusername(username);
-		        BlogImages blogImage = blogImageRepo.findBlogImagesByBlog(blog);
-		        
-		        // Create a map to store both the blog and blogImage
-		        Map<String, Object> result = new HashMap<>();
-		        result.put("blog", blog);
-		        result.put("blogImage", blogImage);
-		        
-		        return result;
+		    User user = userRepo.findByEmail(username);
+		    List<Blog> blog = blogRepository.findBlogsByUsername(username);
+		    List<BlogImages> blogImages = blogImageRepo.findBlogImagesByBlogs(blog);
+		    
+		    // Extract image names from the list of BlogImages
+		    List<String> imageNames = new ArrayList<>();
+		    for (BlogImages blogImage : blogImages) {
+		        imageNames.add(blogImage.getImageName());
+		    }
+
+		    // Create a map to store both the blog and image names
+		    Map<String, Object> result = new HashMap<>();
+		    result.put("blog", blog);
+		    result.put("blogImageNames", imageNames);
+
+		    return result;
 		}
 
 
